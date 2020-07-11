@@ -7,16 +7,18 @@ import java.sql.Connection;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.UnavailableException;
+import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import it.polimi.tiw.beans.User;
-import it.polimi.tiw.dao.TempMeetingDAO;
 import it.polimi.tiw.dao.UsersDAO;
+import org.apache.commons.text.StringEscapeUtils;
 
 @WebServlet("/CheckLogin")
+@MultipartConfig
 public class CheckLogin extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private Connection connection = null;
@@ -44,33 +46,44 @@ public class CheckLogin extends HttpServlet {
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        response.getWriter().append("Served at: ").append(request.getContextPath());
     }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String email = request.getParameter("email");
-        String password = request.getParameter("password");
         UsersDAO usersDAO = new UsersDAO(connection);
         User user = null;
-        try {
-            user = usersDAO.checkCredentials(email, password);
-            new TempMeetingDAO(connection).cleanAllTempMeetingsByUserID(user.getId());
-        } catch (SQLException e) {
-            // throw new ServletException(e);
-            response.sendError(HttpServletResponse.SC_BAD_GATEWAY, "Failure in database credential checking");
+        String path = getServletContext().getContextPath();
+
+        String email = StringEscapeUtils.escapeJava(request.getParameter("email"));
+        String password = StringEscapeUtils.escapeJava(request.getParameter("password"));
+
+        if (email==null || password == null || email.isEmpty() || password.isEmpty()) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.getWriter().println("Please insert your credentials");
             return;
         }
-        String path = getServletContext().getContextPath();
+
+        try {
+            user = usersDAO.checkCredentials(email, password);																	  
+        } catch (SQLException e) {
+            //sql error
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            response.getWriter().println("Internal server error during credential checking");
+            return;
+        }
+
         if (user == null) {
-            path = getServletContext().getContextPath() + "/index.html";
-            request.getSession().setAttribute("loginError", "");
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.getWriter().println("Invalid credentials");
+            return;
         } else {
             request.getSession().setAttribute("user", user);
-            String target = "/HomePage";
-            path = path + target;
+            response.setStatus(HttpServletResponse.SC_OK);
+            response.setContentType("application/json");
+            response.setCharacterEncoding("UTF-8");
+            response.getWriter().println(email);
         }
-        response.sendRedirect(path);
+
     }
 
     public void destroy() {

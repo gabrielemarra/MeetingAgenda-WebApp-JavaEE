@@ -2,16 +2,20 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Meeting Agenda - Login</title>
+    <script src="util.js" charset="utf-8" defer></script>
+    <script src="login.js" charset="utf-8" defer></script>
 </head>
 <body>
 <h1>Online Meeting Agenda</h1>
-<form action="CheckLogin" method="POST">
-    <label for="email-input">Email:</label>
-    <input type="email" name="email" id="email-input" placeholder="email@meeting.com"><br>
-    <label for="password-input">Password:</label>
-    <input type="password" name="password" id="password-input" placeholder="password"><br>
-    <input type="submit" value="Login">
+<form action="#">
+    <fieldset>
+		<label for="email-input">Email:</label>
+		<input type="email" name="email" id="email-input" placeholder="email@meeting.com" required><br>
+		<label for="password-input">Password:</label>
+		<input type="password" name="password" id="password-input" placeholder="password" required><br>
+        <input id="loginbutton" type="button" value="login">
+        <p id="errormessage"></p>
+    </fieldset>
 </form>
 <br><a href="./ConnectionTester"> Test connection to DB</a>
 </body>

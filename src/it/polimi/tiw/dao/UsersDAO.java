@@ -2,6 +2,7 @@ package it.polimi.tiw.dao;
 
 import it.polimi.tiw.beans.User;
 
+import java.security.InvalidParameterException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -68,6 +69,21 @@ public class UsersDAO {
         }
     }
 
+	public void addNewUser(User user) throws InvalidParameterException, SQLException {
+        try {
+            User test = getUserByID(user.getId());
+            throw new InvalidParameterException("User already exists");
+        } catch (SQLException e) {
+            //add a new user
+            String query = "INSERT INTO `meeting-agenda`.`users` (`email`, `password`, `displayed_name`) VALUES (?, ?, ?)";
+            try (PreparedStatement preparedStatement = connection.prepareStatement(query);) {
+                preparedStatement.setString(1, user.getEmail());
+                preparedStatement.setString(2, user.getPassword());
+                preparedStatement.setString(3, user.getDisplayedName());
+                preparedStatement.executeUpdate();
+            }
+        }
+    }																				  
     public ArrayList<User> getUsersFromId(Collection<String> IDs) throws SQLException, NumberFormatException {
         ArrayList<User> result = new ArrayList<>();
         for (String id : IDs) {
