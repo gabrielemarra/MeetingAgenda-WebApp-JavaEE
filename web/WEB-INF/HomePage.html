@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Meeting Agenda - Homepage</title>
+</head>
+<body>
+Login Confirmed
+<p>Welcome to our site:
+    <span data-th-text="${session.user.getDisplayedName()}">Name of the user</span></p>
+
+<a href="./Logout">Logout</a>
+
+<table>
+    <tr>
+        <td>
+            <h2>Meetings I've created</h2>
+            <table id="myMeeting" border="1">
+                <thead>
+                <tr>
+                    <th>Meeting ID</th>
+                    <th>Meeting Name</th>
+                    <th>Duration</th>
+                    <th>Max Participants</th>
+                    <th>Date</th>
+                    <th>Time</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="myMeeting : ${meetingsCreated}">
+                    <td th:text="${myMeeting.idMeeting}">1</td>
+                    <td th:text="${myMeeting.title}">Meeting1</td>
+                    <td th:text="${myMeeting.duration}+ ' min'">35 min</td>
+                    <td th:text="${myMeeting.maxParticipants}">24</td>
+                    <td th:text="${myMeeting.date}">2020-03-21</td>
+                    <td th:text="${myMeeting.time}">09:05:32</td>
+                </tr>
+                </tbody>
+            </table>
+        </td>
+        <td>
+            <h2>Meetings I've been invited</h2>
+            <table id="InvitationMeeting" border="1">
+                <thead>
+                <tr>
+                    <th>Meeting ID</th>
+                    <th>Meeting Name</th>
+                    <th>Created By</th>
+                    <th>Duration</th>
+                    <th>Max Participants</th>
+                    <th>Date</th>
+                    <th>Time</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="myMeeting : ${meetingsAsParticipant}">
+                    <td th:text="${myMeeting.idMeeting}">1</td>
+                    <td th:text="${myMeeting.title}">Meeting1</td>
+                    <td th:text="${myMeeting.creatorName}">Meeting1</td>
+                    <td th:text="${myMeeting.duration}+ ' min'">35 min</td>
+                    <td th:text="${myMeeting.maxParticipants}">24</td>
+                    <td th:text="${myMeeting.date}">2020-03-21</td>
+                    <td th:text="${myMeeting.time}">09:05:32</td>
+                </tr>
+                </tbody>
+            </table>
+        </td>
+        <td>
+            <h2>Create a new Meeting</h2>
+            <form action="CheckMeetingParameters" method="POST">
+                <label for="title-input">Meeting Title:</label>
+                <input type="text" name="title" id="title-input" placeholder="Meeting Title" value="Debug"><br>
+
+                <label for="duration-input">Duration:</label>
+                <input type="number" name="duration" id="duration-input" placeholder="60" value="60"><br>
+
+                <label for="max-participants-input">Max Participants:</label>
+                <input type="number" name="limit" id="max-participants-input" placeholder="10" value="4"><br>
+
+                <label for="date-input">Time:</label>
+                <input type="date" name="date" id="date-input" value="20-20-2053"><br>
+
+                <label for="time-input">Time:</label>
+                <input type="time" name="time" id="time-input" value="20:29"><br>
+
+                <input type="submit" value="Create Meeting">
+            </form>
+
+            <div th:text="${meetingError}"> <p> ERROR: *ERROR TEXT*</p></div>
+        </td>
+    </tr>
+</table>
+</body>
+</html>
