@@ -15,9 +15,9 @@ window.addEventListener("load", () => {
 }, false);
 
 function InvitedAtList(_alert, _listcontainer) {
+
     this.alert = _alert;
     this.listcontainer = _listcontainer;
-
 
     this.reset = function() {
         this.listcontainer.style.visibility = "hidden";

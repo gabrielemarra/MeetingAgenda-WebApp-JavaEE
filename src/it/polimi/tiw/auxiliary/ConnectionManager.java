@@ -1,7 +1,6 @@
-package it.polimi.tiw.aux;
+package it.polimi.tiw.auxiliary;
 
 import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;

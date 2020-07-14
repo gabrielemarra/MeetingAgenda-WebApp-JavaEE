@@ -1,12 +1,11 @@
 package it.polimi.tiw.controllers;
 
 import com.google.gson.Gson;
-import it.polimi.tiw.aux.ConnectionManager;
+import it.polimi.tiw.auxiliary.ConnectionManager;
 import it.polimi.tiw.beans.Meeting;
 import it.polimi.tiw.beans.User;
 import it.polimi.tiw.dao.MeetingsDAO;
 
-import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.UnavailableException;
 import javax.servlet.annotation.WebServlet;
@@ -16,7 +15,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.List;
 
