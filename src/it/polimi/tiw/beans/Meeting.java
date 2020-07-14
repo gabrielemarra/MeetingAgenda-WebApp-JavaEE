@@ -1,8 +1,6 @@
 package it.polimi.tiw.beans;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.stream.Stream;
 
@@ -15,6 +13,7 @@ public class Meeting {
     private String creatorName;
     private LocalDate date;
     private LocalTime time;
+    private LocalTime endTime;
 
     public Meeting() {
         super();
@@ -45,6 +44,8 @@ public class Meeting {
 
         this.date = localDate;
         this.time = localTime;
+        this.endTime = this.time.plus(Duration.ofMinutes(this.duration));
+
     }
 
     public Meeting(Meeting meeting) {
