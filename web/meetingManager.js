@@ -10,7 +10,7 @@ window.addEventListener("load", () => {
             document.getElementById("id_alert"),
             document.getElementById("id_invitedAtList"));
         createdMeetingsList = new CreatedList(
-            document.getElementById("id_alert"),
+            document.getElementById("id_c_alert"),
             document.getElementById("id_CreatedList"));
         invitedList.reset();
         createdMeetingsList.reset();
@@ -38,8 +38,8 @@ function InvitedAtList(_alert, _listcontainer) {
                     var message = req.responseText;
                     if (req.status == 200) {
                         var invitedAtMeetings = JSON.parse(req.responseText);
-                        if (invitedAtMeetings.size == 0) {
-                            self.alert.textContent = "You've not been invited to any meeting yet";
+                        if (invitedAtMeetings.length == 0) {
+                            self.alert.textContent += "You've not been invited to any meeting yet";
                             return;
                         }
                         self.update(invitedAtMeetings); // self visible by closure
@@ -115,8 +115,9 @@ function CreatedList(_alert, _listcontainer) {
                     var message = req.responseText;
                     if (req.status == 200) {
                         var invitedAtMeetings = JSON.parse(req.responseText);
-                        if (invitedAtMeetings.size == 0) {
-                            self.alert.textContent = "You've not been invited to any meeting yet";
+                        if (invitedAtMeetings.length == 0) {
+                            self.alert.textContent += "You have not yet created a meeting.";
+
                             return;
                         }
                         self.update(invitedAtMeetings); // self visible by closure
