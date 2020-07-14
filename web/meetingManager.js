@@ -1,4 +1,4 @@
-pageOrchestrator = new PageOrchestrator(); // main controller
+// pageOrchestrator = new PageOrchestrator(); // main controller
 
 window.addEventListener("load", () => {
     let missionsList;
@@ -80,3 +80,70 @@ function InvitedAtList(_alert, _listcontainer) {
 
 }
 
+(function() {
+
+    function Wizard(wizardId, alert) {
+        // minimum date the user can choose, in this case now and in the future
+        var now = new Date(),
+            formattedDate = now.toISOString().substring(0, 10);
+        this.wizard = wizardId;
+        this.alert = alert;
+
+        this.wizard.querySelector('input[type="date"]').setAttribute("min", formattedDate);
+
+        this.registerEvents = function () {
+
+            // Manage submit button
+            this.wizard.querySelector("button[type='button'].submit").addEventListener('click', (e) => {
+                var target = e.target;
+
+                var eventFieldSet = target.closest("fieldset"),
+                    valid = true;
+                for (i = 0; i < eventFieldSet.elements.length; i++) {
+                    // if (!eventFieldSet.elements[i].checkValidity()) {
+                    //     eventFieldSet.elements[i].reportValidity();
+                    //     valid = false;
+                    //     break;
+                    // }
+                }
+
+                // if (valid) {
+                //     var self = this;
+                //     makeCall("POST", 'CreateMission', e.target.closest("form"),
+                //         function(req) {
+                //             if (req.readyState == XMLHttpRequest.DONE) {
+                //                 var message = req.responseText; // error message or mission id
+                //                 if (req.status == 200) {
+                //                     orchestrator.refresh(message); // id of the new mission passed
+                //                 } else {
+                //                     self.alert.textContent = message;
+                //                     self.reset();
+                //                 }
+                //             }
+                //         }
+                //     );
+                // }
+            });
+            // Manage cancel button
+            this.wizard.querySelector("input[type='button'].cancel").addEventListener('click', (e) => {
+                var target = e.target;
+                target.closest('form').reset();
+                this.reset();
+            });
+        };
+
+        this.reset = function () {
+            // var fieldsets = document.querySelectorAll("#" + this.wizard.id + " fieldset");
+            // fieldsets[0].hidden = false;
+            // fieldsets[1].hidden = true;
+            // fieldsets[2].hidden = true;
+
+        }
+    }
+
+    this.start = function () {
+        wizard = new Wizard(document.getElementById("creationMeetingForm"));
+        wizard.registerEvents(this);
+    }();
+
+})();
