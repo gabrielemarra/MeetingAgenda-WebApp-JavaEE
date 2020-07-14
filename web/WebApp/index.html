@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>My Agenda</title>
+
+    <script src="../util.js" charset="utf-8" defer></script> <!-- defer: execute the script after the page has finished parsing -->
+    <script src="../meetingManager.js" charset="utf-8" defer></script>
+</head>
+<body>
+<header><h3>My Agenda</h3></header>
+<div class="content">
+    <div>
+        <table style="border: 1px solid black">
+            <tr>
+                <td>
+                    <div class="table_content" style="border: 1px solid aquamarine">
+                        <h5>Invited at</h5>
+                        <div class="tableList">
+                            <table id="id_invitedAtList" class="boxed">
+                                <thead>
+                                <tr>
+                                    <th>Title</th>
+                                    <th>Invited by</th>
+                                    <th>Date</th>
+                                    <th>Start</th>
+                                    <th>End</th> <!-- start + duration -->
+
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td id="id_title"></td>
+                                    <td id="id_creator"></td>
+                                    <td id="id_date"></td>
+                                    <td id="id_starttime"></td>
+                                    <td id="id_endtime"></td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </td>
+                <td>
+                    <div class="table_content" style="border: 1px solid aquamarine">
+                        <h5>My Meetings</h5>
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <div id="id_alert" class="alertmessage"></div>
+
+</div>
+
+</body>
+</html>
