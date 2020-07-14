@@ -39,6 +39,9 @@ public class GetMeetingsData extends HttpServlet {
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
+        boolean my = request.getParameter("my").equals("true");
+        //TODO manomissione parametro!!
+
         //get meetings created by the user
         Integer userId = null;
         HttpSession session = request.getSession();
@@ -47,7 +50,10 @@ public class GetMeetingsData extends HttpServlet {
 
         List<Meeting> meetings;
         try {
-            meetings = new MeetingsDAO(connection).getMeetingListWithThisUserAsParticipant(user.getId());
+            if(my) {
+                meetings = new MeetingsDAO(connection).getMeetingListCreatedByThisUser(user.getId());
+            }
+            else meetings = new MeetingsDAO(connection).getMeetingListWithThisUserAsParticipant(user.getId());
         } catch (SQLException e) {
             e.printStackTrace();
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
