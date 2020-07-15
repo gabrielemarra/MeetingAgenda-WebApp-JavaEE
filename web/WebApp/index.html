@@ -5,14 +5,26 @@
     <title>My Agenda</title>
 
     <script src="../util.js" charset="utf-8" defer></script> <!-- defer: execute the script after the page has finished parsing -->
-    <script src="../meetingManager.js" charset="utf-8" defer></script>
+
+    <script src="../userData.js" charset="utf-8" defer></script>
 
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+
 </head>
 <body>
 <header><h3>My Agenda</h3></header>
+
+<div class="account">
+    <h4 id="id_userDispName">Welcome Name LastName</h4>
+    <div>
+        <p id="id_userEmail">prova@test.tk</p>
+    </div>
+    <div>
+        <a href="#">LOG OUT</a>
+    </div>
+</div>
 <div class="content">
     <div>
         <table style="border: 1px solid black">

@@ -4,8 +4,6 @@ window.addEventListener("load", () => {
     if (sessionStorage.getItem("username") == null) {
         window.location.href = "../index.html";
     } else {
-        // pageOrchestrator.start(); // initialize the components
-        //pageOrchestrator.refresh();
         invitedList = new InvitedAtList(
             document.getElementById("id_alert"),
             document.getElementById("id_invitedAtList"));
@@ -175,7 +173,7 @@ function CreatedList(_alert, _listcontainer) {
         this.listcontainer.style.visibility = "visible";
     }
 }
-
+/*
 (function() {
 
     function Wizard(wizardId, alert) {
@@ -242,7 +240,7 @@ function CreatedList(_alert, _listcontainer) {
         wizard.registerEvents(this);
     }();
 
-})();
+})(); */
 
 function getDateString(meeting) {
     return meeting.date.year + "-" + meeting.date.month + "-" + getDayFormatted(meeting.date.day);
