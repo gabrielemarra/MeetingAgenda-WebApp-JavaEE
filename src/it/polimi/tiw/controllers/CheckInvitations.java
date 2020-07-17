@@ -170,6 +170,10 @@ public class CheckInvitations extends HttpServlet {
         response.sendRedirect(getServletContext().getContextPath() + "/MeetingCancellation");
     }
 
+    private void cleanTempDB(TempMeeting tempMeeting) throws SQLException {
+        new TempMeetingDAO(connection).deleteTempMeeting(tempMeeting);
+    }
+
     private Map<String, String[]> mapCleaner (Map<String, String[]> map) {
         Map<String, String[]> cleanedMap = new LinkedHashMap<>(map);
         cleanedMap.remove("meetingTitle");
@@ -177,7 +181,6 @@ public class CheckInvitations extends HttpServlet {
         return cleanedMap;
     }
 
-    private void cleanTempDB(TempMeeting tempMeeting) throws SQLException {
-        new TempMeetingDAO(connection).deleteTempMeeting(tempMeeting);
-    }
+
+
 }

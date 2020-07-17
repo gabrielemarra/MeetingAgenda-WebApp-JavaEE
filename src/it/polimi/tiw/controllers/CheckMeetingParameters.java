@@ -92,6 +92,7 @@ public class CheckMeetingParameters extends HttpServlet {
         try {
             tempMeetingDAO.addTempMeetingToDatabase(tempMeeting);
             response.setStatus(HttpServletResponse.SC_OK);
+
         } catch (SQLException e) {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             response.getWriter().println("internal server error: " + e.getMessage());

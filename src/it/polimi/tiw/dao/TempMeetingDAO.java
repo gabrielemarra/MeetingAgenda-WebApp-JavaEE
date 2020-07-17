@@ -83,6 +83,18 @@ public class TempMeetingDAO {
         }
     }
 
+    public synchronized void increaseAttempts(TempMeeting tempMeeting) throws SQLException {
+        String query = "UPDATE temp_meetings SET attempts = ? WHERE title = ? AND date_time=? AND id_creator=?";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setInt(1, tempMeeting.getAttempts()+1);
+            preparedStatement.setString(2, tempMeeting.getTitle());
+            preparedStatement.setString(3, tempMeeting.getFormattedDateTime());
+            preparedStatement.setInt(4, tempMeeting.getIdCreator());
+
+            preparedStatement.executeUpdate();
+        }
+    }
+
     public synchronized void deleteTempMeeting(TempMeeting tempMeeting) throws SQLException {
         String query = "DELETE FROM temp_meetings WHERE title = ? AND date_time=? AND id_creator=?";
         try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
