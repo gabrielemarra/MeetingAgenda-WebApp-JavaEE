@@ -101,72 +101,106 @@
 
 <div class="container mx-auto my-4">
     <!-- Modal -->
-    <div class="modal fade" id="invitationModal" tabindex="-1" role="dialog" aria-labelledby="invitationModalLabel"
-         aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="invitationModalLabel">Invitation List</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    LISTA INVITATI
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">Invite</button>
+    <div class="container mx-auto my-4">
+        <!-- Modal -->
+        <div class="modal fade" id="invitationModal" tabindex="-1" role="dialog" aria-labelledby="invitationModalLabel"
+             aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="invitationModalLabel">Invitation List</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form action="CheckInvitations" method="post">
+                            <div class="mx-auto">
+                                <h5>Invite</h5>
+                                <div id="id_modal_alert" class="alertmessage"></div>
+                                <!-- DYNAMIC -->
+                                <fieldset>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" checked="checked"/>
+                                        <label class="form-check-label">User Already Selected</label>
+                                    </div>
+                                </fieldset>
+                                <fieldset>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox"/>
+                                        <label class="form-check-label">User
+                                            Not
+                                            Selected</label>
+                                    </div>
+                                </fieldset>
+                            </div>
+                            <input type="hidden" id="meetingTitle" name="meetingTitle" value="Test_Meeting_Title">
+                            <input type="hidden" id="meetingDateTime" name="meetingDateTime" value="DATE_MEETING">
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary">Invite</button>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
 
 
-    <div class="col-lg-4 mx-auto mt-4">
-        <h4>Create a new Meeting</h4>
-        <div class="alert alert-danger" id="id_creation_alert" style="display: none">ERROR: *ERROR TEXT*</div>
-        <form action="#" id="creationMeetingForm">
-            <div class="form-group row">
-                <label class="col-form-label" for="title-input">Meeting Title:</label>
-                <input class="form-control" type="text" name="title" id="title-input" placeholder="Meeting Title"
-                       value="Debug">
-                <div class="alert alert-danger mx-auto" id="id_title_alert" style="display: none">ERROR: *ERROR TEXT*</div>
-            </div>
-            <div class="form-group row">
-                <label class="form-label" for="duration-input">Duration:</label>
-                <input class="form-control" type="number" name="duration" id="duration-input" placeholder="60"
-                       value="60">
-                <div class="alert alert-danger mx-auto" id="id_duration_alert" style="display: none">ERROR: *ERROR TEXT*</div>
-            </div>
-            <div class="form-group row">
-                <label class="col-form-label" for="max-participants-input">Max Participants:</label>
-                <input class="form-control" type="number" name="limit" id="max-participants-input" placeholder="10"
-                       value="4">
-                <div class="alert alert-danger mx-auto" id="id_participants_alert" style="display: none">ERROR: *ERROR TEXT*</div>
-            </div>
-            <div class="form-group row">
-                <label class="col-form-label" for="date-input">Date:</label>
-                <input class="form-control" type="date" name="date" id="date-input" value="20-20-2053">
-                <div class="alert alert-danger mx-auto" id="id_date_alert" style="display: none">ERROR: *ERROR TEXT*</div>
-            </div>
-            <div class="form-group row">
-                <label class="col-form-label" for="time-input">Time:</label>
-                <input class="form-control" type="time" name="time" id="time-input" value="20:29">
-                <div class="alert alert-danger mx-auto" id="id_time_alert" style="display: none">ERROR: *ERROR TEXT*</div>
-            </div>
-            <div class="form-group row">
+        <div class="col-lg-4 mx-auto mt-4">
+            <h4>Create a new Meeting</h4>
+            <div class="alert alert-danger" id="id_creation_alert" style="display: none">ERROR: *ERROR TEXT*</div>
+            <form action="#" id="creationMeetingForm">
+                <div class="form-group row">
+                    <label class="col-form-label" for="title-input">Meeting Title:</label>
+                    <input class="form-control" type="text" name="title" id="title-input" placeholder="Meeting Title"
+                           value="Debug">
+                    <div class="alert alert-danger mx-auto" id="id_title_alert" style="display: none">ERROR: *ERROR
+                        TEXT*
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="form-label" for="duration-input">Duration:</label>
+                    <input class="form-control" type="number" name="duration" id="duration-input" placeholder="60"
+                           value="60">
+                    <div class="alert alert-danger mx-auto" id="id_duration_alert" style="display: none">ERROR: *ERROR
+                        TEXT*
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-form-label" for="max-participants-input">Max Participants:</label>
+                    <input class="form-control" type="number" name="limit" id="max-participants-input" placeholder="10"
+                           value="4">
+                    <div class="alert alert-danger mx-auto" id="id_participants_alert" style="display: none">ERROR:
+                        *ERROR TEXT*
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-form-label" for="date-input">Date:</label>
+                    <input class="form-control" type="date" name="date" id="date-input" value="20-20-2053">
+                    <div class="alert alert-danger mx-auto" id="id_date_alert" style="display: none">ERROR: *ERROR
+                        TEXT*
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-form-label" for="time-input">Time:</label>
+                    <input class="form-control" type="time" name="time" id="time-input" value="20:29">
+                    <div class="alert alert-danger mx-auto" id="id_time_alert" style="display: none">ERROR: *ERROR
+                        TEXT*
+                    </div>
+                </div>
+                <div class="form-group row">
 
-                <button class="btn-primary form-group col" type="button" value="submit" id="creationMeetingSubmit"
-                        name="submit">Create Meeting
-                </button>
-                <button class="btn-secondary form-group col offset-1" type="button" value="cancel"
-                        id="creationMeetingCancel" name="cancel">Cancel
-                </button>
-            </div>
-        </form>
+                    <button class="btn-primary form-group col" type="button" value="submit" id="creationMeetingSubmit"
+                            name="submit">Create Meeting
+                    </button>
+                    <button class="btn-secondary form-group col offset-1" type="button" value="cancel"
+                            id="creationMeetingCancel" name="cancel">Cancel
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
-
 </body>
 </html>
