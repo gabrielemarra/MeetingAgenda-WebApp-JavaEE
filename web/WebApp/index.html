@@ -125,31 +125,35 @@
 
     <div class="col-lg-4 mx-auto mt-4">
         <h4>Create a new Meeting</h4>
-        <div class="alert alert-danger" id="id_creation_alert">ERROR: *ERROR TEXT*</div>
+        <div class="alert alert-danger" id="id_creation_alert" style="display: none">ERROR: *ERROR TEXT*</div>
         <form action="#" id="creationMeetingForm">
             <div class="form-group row">
                 <label class="col-form-label" for="title-input">Meeting Title:</label>
                 <input class="form-control" type="text" name="title" id="title-input" placeholder="Meeting Title"
                        value="Debug">
-                <div class="alert alert-danger" id="id_title_alert" style="display: none">ERROR: *ERROR TEXT*</div>
+                <div class="alert alert-danger mx-auto" id="id_title_alert" style="display: none">ERROR: *ERROR TEXT*</div>
             </div>
             <div class="form-group row">
                 <label class="form-label" for="duration-input">Duration:</label>
                 <input class="form-control" type="number" name="duration" id="duration-input" placeholder="60"
                        value="60">
+                <div class="alert alert-danger mx-auto" id="id_duration_alert" style="display: none">ERROR: *ERROR TEXT*</div>
             </div>
             <div class="form-group row">
                 <label class="col-form-label" for="max-participants-input">Max Participants:</label>
                 <input class="form-control" type="number" name="limit" id="max-participants-input" placeholder="10"
                        value="4">
+                <div class="alert alert-danger mx-auto" id="id_participants_alert" style="display: none">ERROR: *ERROR TEXT*</div>
             </div>
             <div class="form-group row">
-                <label class="col-form-label" for="date-input">Time:</label>
+                <label class="col-form-label" for="date-input">Date:</label>
                 <input class="form-control" type="date" name="date" id="date-input" value="20-20-2053">
+                <div class="alert alert-danger mx-auto" id="id_date_alert" style="display: none">ERROR: *ERROR TEXT*</div>
             </div>
             <div class="form-group row">
                 <label class="col-form-label" for="time-input">Time:</label>
                 <input class="form-control" type="time" name="time" id="time-input" value="20:29">
+                <div class="alert alert-danger mx-auto" id="id_time_alert" style="display: none">ERROR: *ERROR TEXT*</div>
             </div>
             <div class="form-group row">
 

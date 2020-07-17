@@ -34,18 +34,52 @@
         }
     });
 
-})();
-
-document.getElementById("title-input").onchange = validateTitle;
-function validateTitle(e){
-    var title = document.getElementById("title-input");
-    if (title.value==="" || title.value.length >= 48 || title.value.length < 3) {
-        const titleAlert = document.getElementById("id_title_alert");
-        titleAlert.textContent = "invalid title";
-        titleAlert.style.display = "block";
-    } else {
-        const titleAlert = document.getElementById("id_title_alert");
-        titleAlert.textContent = "";
-        titleAlert.style.display = "none";
+    document.getElementById("title-input").onchange = realtimeValidateTitle;
+    function realtimeValidateTitle(e){
+        var title = e.target.value;
+        if (title==="" || title.length >= 48 || title.length < 3) {
+            e.target.className= "form-control is-invalid"
+            const titleAlert = document.getElementById("id_title_alert");
+            titleAlert.textContent = "Invalid title";
+            titleAlert.style.display = "block";
+        } else {
+            e.target.className= "form-control is-valid"
+            const titleAlert = document.getElementById("id_title_alert");
+            titleAlert.textContent = "";
+            titleAlert.style.display = "none";
+        }
     }
-}
+
+    document.getElementById("duration-input").onchange = realtimeValidateDuration;
+    function realtimeValidateDuration(e){
+        var duration = e.target.value;
+        if (duration==="" || parseInt(duration) <= 0) {
+            e.target.className= "form-control is-invalid"
+            const titleAlert = document.getElementById("id_duration_alert");
+            titleAlert.textContent = "Invalid duration";
+            titleAlert.style.display = "block";
+        } else {
+            e.target.className= "form-control is-valid"
+            const titleAlert = document.getElementById("id_duration_alert");
+            titleAlert.textContent = "";
+            titleAlert.style.display = "none";
+        }
+    }
+
+    document.getElementById("max-participants-input").onchange = realtimeValidateParticipants;
+    function realtimeValidateParticipants(e){
+        var duration = e.target.value;
+        if (duration==="" || parseInt(duration) <= 0) {
+            e.target.className= "form-control is-invalid"
+            const titleAlert = document.getElementById("id_participants_alert");
+            titleAlert.textContent = "Invalid max participants";
+            titleAlert.style.display = "block";
+        } else {
+            e.target.className= "form-control is-valid"
+            const titleAlert = document.getElementById("id_participants_alert");
+            titleAlert.textContent = "";
+            titleAlert.style.display = "none";
+        }
+    }
+
+})();
