@@ -119,12 +119,9 @@
                                 <h5>Invite</h5>
                                 <div id="id_modal_alert" class="alertmessage"></div>
                                 <!-- DYNAMIC -->
-                                <fieldset id="id_invitation_list">
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" />
-                                        <label class="form-check-label">User Already Selected</label>
-                                    </div>
-                                </fieldset>
+                                <div id="id_invitation_list">
+
+                                </div>
                             </div>
                             <input type="hidden" id="meetingTitle" name="meetingTitle" value="Test_Meeting_Title">
                             <input type="hidden" id="meetingDateTime" name="meetingDateTime" value="DATE_MEETING">
@@ -139,10 +136,12 @@
         </div>
 
         <template id="id_invite_user">
-            <div class="form-check">
-                <input class="form-check-input" type="checkbox"/>
-                <label class="form-check-label"></label>
-            </div>
+            <fieldset class="my-2">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" />
+                    <label class="form-check-label">User Already Selected</label>
+                </div>
+            </fieldset>
         </template>
 
 

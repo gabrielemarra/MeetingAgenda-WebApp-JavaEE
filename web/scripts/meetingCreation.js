@@ -1,7 +1,4 @@
-
-
-
-(function() { // avoid variables ending up in the global scope
+(function () { // avoid variables ending up in the global scope
 
     function openModal() {
         $("#invitationModal").modal("show");
@@ -46,12 +43,28 @@
 
                 var template = document.querySelector("#id_invite_user");
 
+                var alreadySelectedUsers = false;
+                if (sessionStorage.getItem("alreadySelectedUsers")) {
+                    //todo
+                    // alreadySelectedUsers = parseInt(sessionStorage.getItem("alreadySelectedUsers"));
+                }
+
                 //print a table row for each meeting
                 invitationList.forEach(function (user) { // self visible here, not this
                     var row = template.content.cloneNode(true);
                     var label = row.querySelector("label");
                     label.textContent = user.displayedName;
-                    label.setAttribute("for", user.userID);
+                    label.setAttribute("for", user.id);
+
+                    var checkBox = row.querySelector("input");
+                    checkBox.setAttribute("field", user.id);
+                    checkBox.setAttribute("name", user.id);
+                    checkBox.setAttribute("value", user.id);
+
+                    if (alreadySelectedUsers && alreadySelectedUsers===user.id) {
+                        //todo check
+                        checkBox.setAttribute("checked", "checked");
+                    }
 
                     self.listcontainer.appendChild(row);
                 });
@@ -62,11 +75,11 @@
     }
 
     document.getElementById("creationMeetingSubmit").addEventListener('click', (e) => {
-        var target=e.target;
+        var target = e.target;
         var form = target.closest("form");
         if (form.checkValidity()) {
             makeCall("POST", '../CheckMeetingParameters', form,
-                function(req) {
+                function (req) {
                     if (req.readyState == XMLHttpRequest.DONE) {
                         var message = req.responseText;
                         switch (req.status) {
@@ -80,10 +93,10 @@
                                 invitationList.show();
                                 break;
                             case 400: // bad request
-                               // document.getElementById("errormessage").textContent = message;
+                                // document.getElementById("errormessage").textContent = message;
                                 break;
                             case 401: // unauthorized
-                               // document.getElementById("errormessage").textContent = message;
+                                // document.getElementById("errormessage").textContent = message;
                                 break;
                             case 500: // server error
                                 //document.getElementById("errormessage").textContent = message;
@@ -98,15 +111,16 @@
     });
 
     document.getElementById("title-input").onchange = realtimeValidateTitle;
-    function realtimeValidateTitle(e){
+
+    function realtimeValidateTitle(e) {
         var title = e.target.value;
-        if (title==="" || title.length >= 48 || title.length < 3) {
-            e.target.className= "form-control is-invalid"
+        if (title === "" || title.length >= 48 || title.length < 3) {
+            e.target.className = "form-control is-invalid"
             const titleAlert = document.getElementById("id_title_alert");
             titleAlert.textContent = "Invalid title";
             titleAlert.style.display = "block";
         } else {
-            e.target.className= "form-control is-valid"
+            e.target.className = "form-control is-valid"
             const titleAlert = document.getElementById("id_title_alert");
             titleAlert.textContent = "";
             titleAlert.style.display = "none";
@@ -114,15 +128,16 @@
     }
 
     document.getElementById("duration-input").onchange = realtimeValidateDuration;
-    function realtimeValidateDuration(e){
+
+    function realtimeValidateDuration(e) {
         var duration = e.target.value;
-        if (duration==="" || parseInt(duration) <= 0) {
-            e.target.className= "form-control is-invalid"
+        if (duration === "" || parseInt(duration) <= 0) {
+            e.target.className = "form-control is-invalid"
             const titleAlert = document.getElementById("id_duration_alert");
             titleAlert.textContent = "Invalid duration";
             titleAlert.style.display = "block";
         } else {
-            e.target.className= "form-control is-valid"
+            e.target.className = "form-control is-valid"
             const titleAlert = document.getElementById("id_duration_alert");
             titleAlert.textContent = "";
             titleAlert.style.display = "none";
@@ -130,15 +145,16 @@
     }
 
     document.getElementById("max-participants-input").onchange = realtimeValidateParticipants;
-    function realtimeValidateParticipants(e){
+
+    function realtimeValidateParticipants(e) {
         var duration = e.target.value;
-        if (duration==="" || parseInt(duration) <= 0) {
-            e.target.className= "form-control is-invalid"
+        if (duration === "" || parseInt(duration) <= 0) {
+            e.target.className = "form-control is-invalid"
             const titleAlert = document.getElementById("id_participants_alert");
             titleAlert.textContent = "Invalid max participants";
             titleAlert.style.display = "block";
         } else {
-            e.target.className= "form-control is-valid"
+            e.target.className = "form-control is-valid"
             const titleAlert = document.getElementById("id_participants_alert");
             titleAlert.textContent = "";
             titleAlert.style.display = "none";
