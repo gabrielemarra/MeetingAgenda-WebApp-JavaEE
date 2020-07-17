@@ -4,8 +4,9 @@
 
 (function() { // avoid variables ending up in the global scope
 
-    document.getElementById("loginbutton").addEventListener('click', (e) => {
+    document.getElementById("creationMeetingSubmit").addEventListener('click', (e) => {
         var form = e.target.closest("form");
+        alert("funzziona");
         if (form.checkValidity()) {
             makeCall("POST", 'CheckLogin', e.target.closest("form"),
                 function(req) {
@@ -13,8 +14,7 @@
                         var message = req.responseText;
                         switch (req.status) {
                             case 200:
-                                sessionStorage.setItem('username', message);
-                                window.location.href = "./WebApp";
+                                //open modal
                                 break;
                             case 400: // bad request
                                 document.getElementById("errormessage").textContent = message;
@@ -35,3 +35,17 @@
     });
 
 })();
+
+document.getElementById("title-input").onchange = validateTitle;
+function validateTitle(e){
+    var title = document.getElementById("title-input");
+    if (title.value==="" || title.value.length >= 48 || title.value.length < 3) {
+        const titleAlert = document.getElementById("id_title_alert");
+        titleAlert.textContent = "invalid title";
+        titleAlert.style.display = "block";
+    } else {
+        const titleAlert = document.getElementById("id_title_alert");
+        titleAlert.textContent = "";
+        titleAlert.style.display = "none";
+    }
+}
