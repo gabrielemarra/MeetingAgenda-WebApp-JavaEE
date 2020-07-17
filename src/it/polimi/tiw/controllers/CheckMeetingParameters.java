@@ -1,8 +1,10 @@
 package it.polimi.tiw.controllers;
 
+import it.polimi.tiw.auxiliary.ConnectionManager;
 import it.polimi.tiw.beans.TempMeeting;
 import it.polimi.tiw.beans.User;
 import it.polimi.tiw.dao.TempMeetingDAO;
+import org.apache.commons.text.StringEscapeUtils;
 
 
 import javax.servlet.RequestDispatcher;
@@ -36,13 +38,7 @@ public class CheckMeetingParameters extends HttpServlet {
 
     public void init() throws ServletException {
         try {
-            ServletContext context = getServletContext();
-            String driver = context.getInitParameter("dbDriver");
-            String url = context.getInitParameter("dbUrl");
-            String user = context.getInitParameter("dbUser");
-            String password = context.getInitParameter("dbPassword");
-            Class.forName(driver);
-            connection = DriverManager.getConnection(url, user, password);
+            connection = ConnectionManager.tryConnection(getServletContext());
 
         } catch (ClassNotFoundException e) {
             throw new UnavailableException("Can't load database driver");
@@ -60,27 +56,36 @@ public class CheckMeetingParameters extends HttpServlet {
             throws ServletException, IOException {
         HttpSession session = request.getSession();
         User creatorUser = (User) session.getAttribute("user");
+
+        if (creatorUser == null) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.getWriter().println("Invalid credentials");
+            return;
+        }
         String path = getServletContext().getContextPath();
 
         // fetch meeting parameters from the request object
         TempMeeting tempMeeting = new TempMeeting();
 
         try {
-            tempMeeting.setTitle(request.getParameter("title"));
+            tempMeeting.setTitle(StringEscapeUtils.escapeJava(request.getParameter("title")));
             tempMeeting.setDuration(Integer.parseInt(request.getParameter("duration")));
             tempMeeting.setMaxParticipants(Integer.parseInt(request.getParameter("limit")));
             tempMeeting.setIdCreator(creatorUser.getId());
             tempMeeting.setLocalDate(getDateFromRequestParameter(request.getParameter("date")));
             tempMeeting.setLocalTime(LocalTime.parse(request.getParameter("time")));
-        } catch (DateTimeParseException | NumberFormatException | NullPointerException e) {
-            path += "/HomePage?error=";
-            path += "Invalid Arguments";
-            response.sendRedirect(path);
+        } catch (DateTimeParseException e) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.getWriter().println("invalid date/time");
+            return;
+        } catch (NumberFormatException e) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.getWriter().println("invalid integer value");
             return;
         }
 
         //if meeting fetch has been successful
-        try {
+
             TempMeeting.checkInsertedMeeting(tempMeeting);
             request.setAttribute("tempMeetingInfo", tempMeeting);
             RequestDispatcher rd = request.getRequestDispatcher("/Invite");
@@ -89,16 +94,10 @@ public class CheckMeetingParameters extends HttpServlet {
                 tmdao.addTempMeetingToDatabase(tempMeeting);
                 rd.forward(request, response);
             } catch (SQLException e) {
-                path += "/HomePage?error=";
-                path += "Error writing temporary meeting to database";
-                response.sendRedirect(path);
+                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                response.getWriter().println("internal server error: " + e.getMessage());
             }
-        } catch (InvalidParameterException e) {
-            //redirect the client to Homepage
-            path += "/HomePage?error=";
-            path += e.getMessage();
-            response.sendRedirect(path);
-        }
+
     }
 
     private LocalDate getDateFromRequestParameter(String param) {
