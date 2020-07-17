@@ -41,7 +41,6 @@ public class CheckMeetingParameters extends HttpServlet {
     public void init() throws ServletException {
         try {
             connection = ConnectionManager.tryConnection(getServletContext());
-
         } catch (ClassNotFoundException e) {
             throw new UnavailableException("Can't load database driver");
         } catch (SQLException e) {
@@ -51,6 +50,7 @@ public class CheckMeetingParameters extends HttpServlet {
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        //todo
         response.sendRedirect(getServletContext().getContextPath() + "/HomePage?error=Invalid request to the server");
     }
 
@@ -87,18 +87,15 @@ public class CheckMeetingParameters extends HttpServlet {
         }
 
         //if meeting fetch has been successful
-
-            TempMeeting.checkInsertedMeeting(tempMeeting);
-            request.setAttribute("tempMeetingInfo", tempMeeting);
-            RequestDispatcher rd = request.getRequestDispatcher("/Invite");
-            TempMeetingDAO tmdao = new TempMeetingDAO(connection);
-            try {
-                tmdao.addTempMeetingToDatabase(tempMeeting);
-                rd.forward(request, response);
-            } catch (SQLException e) {
-                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                response.getWriter().println("internal server error: " + e.getMessage());
-            }
+        TempMeeting.checkInsertedMeeting(tempMeeting);
+        TempMeetingDAO tempMeetingDAO = new TempMeetingDAO(connection);
+        try {
+            tempMeetingDAO.addTempMeetingToDatabase(tempMeeting);
+            response.setStatus(HttpServletResponse.SC_OK);
+        } catch (SQLException e) {
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            response.getWriter().println("internal server error: " + e.getMessage());
+        }
     }
 
     private LocalDate getDateFromRequestParameter(String param) {
