@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import it.polimi.tiw.beans.User;
+import it.polimi.tiw.dao.TempMeetingDAO;
 import it.polimi.tiw.dao.UsersDAO;
 import org.apache.commons.text.StringEscapeUtils;
 
@@ -64,7 +65,8 @@ public class CheckLogin extends HttpServlet {
         }
 
         try {
-            user = usersDAO.checkCredentials(email, password);																	  
+            user = usersDAO.checkCredentials(email, password);
+            new TempMeetingDAO(connection).cleanAllTempMeetingsByUserID(user.getId());
         } catch (SQLException e) {
             //sql error
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
