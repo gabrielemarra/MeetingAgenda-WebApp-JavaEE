@@ -1,10 +1,13 @@
 package it.polimi.tiw.debugutility;
 
+import com.google.gson.Gson;
 import it.polimi.tiw.beans.User;
+import it.polimi.tiw.dao.UsersDAO;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.List;
 
 public class testMain {
 
@@ -29,11 +32,17 @@ public class testMain {
         user1.setId(9);
 
 
-//        try {
-//            System.out.println("\n");
-//        } catch (SQLException throwables) {
-//            throwables.printStackTrace();
-//        }
+        try {
+            UsersDAO usersDAO = new UsersDAO(connection);
+
+            List<User> allAvailableUsers = usersDAO.getUsersToInvite(user1.getId()); //all the available users
+
+            Gson gson = new Gson();
+            String json = gson.toJson(allAvailableUsers);
+            System.out.println("\n");
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
 
     }
 }
