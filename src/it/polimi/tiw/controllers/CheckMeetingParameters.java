@@ -12,6 +12,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 
 import javax.servlet.UnavailableException;
+import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -28,6 +29,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 
 @WebServlet("/CheckMeetingParameters")
+@MultipartConfig
 public class CheckMeetingParameters extends HttpServlet {
     private static final long serialVersionUID = 1L;
     Connection connection;
@@ -97,7 +99,6 @@ public class CheckMeetingParameters extends HttpServlet {
                 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                 response.getWriter().println("internal server error: " + e.getMessage());
             }
-
     }
 
     private LocalDate getDateFromRequestParameter(String param) {

@@ -1,20 +1,17 @@
-/**
- * Login management
- */
-
 (function() { // avoid variables ending up in the global scope
 
     document.getElementById("creationMeetingSubmit").addEventListener('click', (e) => {
-        var form = e.target.closest("form");
-        alert("funzziona");
+        var target=e.target;
+        var form = target.closest("form");
         if (form.checkValidity()) {
-            makeCall("POST", 'CheckLogin', e.target.closest("form"),
+            makeCall("POST", '../CheckMeetingParameters', form,
                 function(req) {
                     if (req.readyState == XMLHttpRequest.DONE) {
                         var message = req.responseText;
                         switch (req.status) {
                             case 200:
                                 //open modal
+                                alert("APRI MODAL")
                                 break;
                             case 400: // bad request
                                 document.getElementById("errormessage").textContent = message;
