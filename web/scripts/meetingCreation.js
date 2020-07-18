@@ -488,6 +488,7 @@ function resetInviteError() {
                 switch (req.status) {
                     case 200:
                         resetMeetingInfo();
+                        break;
                     case 400: // bad request
                         // document.getElementById("errormessage").textContent = message;
                         break;
