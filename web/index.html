@@ -4,19 +4,43 @@
     <meta charset="UTF-8">
     <script src="scripts/util.js" charset="utf-8" defer></script>
     <script src="scripts/login.js" charset="utf-8" defer></script>
+
+    <title>Meeting Agenda - Login</title>
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
+          integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
 </head>
 <body>
-<h1>Online Meeting Agenda</h1>
-<form action="#">
-    <fieldset>
-		<label for="email-input">Email:</label>
-		<input type="email" name="email" id="email-input" placeholder="email@meeting.com" required><br>
-		<label for="password-input">Password:</label>
-		<input type="password" name="password" id="password-input" placeholder="password" required><br>
-        <input id="loginbutton" type="button" value="login">
-        <p id="errormessage"></p>
-    </fieldset>
-</form>
-<br><a href="./ConnectionTester"> Test connection to DB</a>
+<div class="container mx-auto my-5" style="max-width: 600px">
+    <h1>Online Meeting Agenda</h1>
+    <div class="row mx-auto mt-4">
+        <div class="col">
+            <form action="#">
+                    <div class="form-group row">
+                        <label for="id_email_input" class="col-form-label">Email:</label>
+                        <input type="email" name="email" class="form-control" id="id_email_input" placeholder="email@meeting.com" required>
+                    </div>
+                    <div class="form-group row">
+                        <label for="id_password_input" class="col-form-label">Password:</label>
+                        <input type="password" name="password" class="form-control" id="id_password_input" placeholder="password"
+                               required>
+                    </div>
+                    <div class="form-group row">
+                        <div class="alert alert-danger mx-auto" id="id_error_message" style="display: none">ERROR: *ERROR
+                            TEXT*
+                        </div>
+                        <div class="col text-center">
+                            <button type="button" class="btn btn-primary" id="id_login_button">Sign in</button>
+                        </div>
+                    </div>
+            </form>
+        </div>
+    </div>
+    <div class="row my-1">
+        <div class="col text-center">
+            <a href="./ConnectionTester"> Test connection to DB</a>
+        </div>
+    </div>
+</div>
 </body>
 </html>
