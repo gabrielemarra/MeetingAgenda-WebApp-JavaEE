@@ -185,31 +185,52 @@
         return parseInt(sessionStorage.getItem("invitationAttempts"))
     }
 
+    function updateLocalAttempts() {
+        makeCall("POST", '../GetAttempts',getMeetingInfoForm(),function (req) {
+            if (req.readyState == XMLHttpRequest.DONE) {
+                switch (req.status) {
+                    case 200:
+                        let attemptsFromServer = req.readyState;
+                        sessionStorage.setItem("invitationAttempts", attemptsFromServer.toString());
+                        break;
+                    case 400: // bad request
+                        // document.getElementById("errormessage").textContent = message;
+                        break;
+                    case 401: // unauthorized
+                        // document.getElementById("errormessage").textContent = message;
+                        break;
+                    case 500: // server error
+                        //document.getElementById("errormessage").textContent = message;
+                        break;
+                }
+            }
+        });
+    }
+
     function increaseInvitationAttempts() {
         let oldAttempts = getInvitationAttempts();
 
-        //send ajax call to servlet
-
-        let invitationAttempts = oldAttempts + 1;
-        sessionStorage.setItem("invitationAttempts", invitationAttempts.toString());
+        makeCall("POST", '../IncreaseAttempts',getMeetingInfoForm(),function (req) {
+            if (req.readyState == XMLHttpRequest.DONE) {
+                switch (req.status) {
+                    case 200:
+                        let attemptsFromServer = req.readyState;
+                        sessionStorage.setItem("invitationAttempts", attemptsFromServer.toString());
+                        break;
+                    case 400: // bad request
+                        // document.getElementById("errormessage").textContent = message;
+                        break;
+                    case 401: // unauthorized
+                        // document.getElementById("errormessage").textContent = message;
+                        break;
+                    case 500: // server error
+                        //document.getElementById("errormessage").textContent = message;
+                        break;
+                }
+            }
+        });
     }
 
-    // function setMeetingInfoIntoInvitationForm() {
-    //     let meetingInfo = getMeetingInfo();
-    //     let localDate = meetingInfo.localDate;
-    //     //month decrease by one because of Date.prototype
-    //     let meetingDate = new Date(localDate.year, localDate.month-1, localDate.day, meetingInfo.localTime.hour, meetingInfo.localTime.minute, meetingInfo.localTime.second);
-    //
-    //     alert("Test");
-    //
-    //     let meetingDateString = meetingDate.toISOString().slice(0, 19).replace(/T/, " ");
-    //
-    //     document.getElementById("id_meetingTitle").setAttribute("value", meetingInfo.title);
-    //     document.getElementById("id_meetingDateTime").setAttribute("value", meetingDateString);
-    // }
-
-
-    //the user submits a meeting with the invited users list
     document.getElementById("id_modal_submit_button").addEventListener('click', (e) => {
         var test = getInvitationAttempts();
 
@@ -225,7 +246,6 @@
             makeCall("POST", '../CheckInvitations', getInvitationDataForm(),
                 function (req) {
                     if (req.readyState == XMLHttpRequest.DONE) {
-                        var message = req.responseText;
                         switch (req.status) {
                             case 200:
                                 //todo
@@ -258,6 +278,16 @@
         formToSend.append("meetingDateTime", getDateString(meetingInfo.localDate, meetingInfo.localTime));
 
         invitationIDs.forEach(element => formToSend.append(element, element));
+
+        return formToSend;
+    }
+
+    function getMeetingInfoForm() {
+        let meetingInfo = getMeetingInfo();
+
+        let formToSend = new FormData();
+        formToSend.append("meetingTitle", meetingInfo.title);
+        formToSend.append("meetingDateTime", getDateString(meetingInfo.localDate, meetingInfo.localTime));
 
         return formToSend;
     }
