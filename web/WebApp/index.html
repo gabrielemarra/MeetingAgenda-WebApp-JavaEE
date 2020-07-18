@@ -43,8 +43,33 @@
             <div class="row">
                 <div class="col mx-auto mt-4">
                     <h4>Meetings I've created</h4>
-                    <div id="id_alert" class="alertmessage"></div>
-                    <table id="id_invitedAtList" class="boxed">
+                    <div id="id_c_alert" class="alert alert-danger mx-auto px-2 py-0" style="display: none"></div>
+                    <table id="id_CreatedList" class="table-bordered">
+                        <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Date</th>
+                            <th>Start</th>
+                            <th>End</th> <!-- start + duration -->
+                            <th>Max. # Participants</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td id="idc_title">test</td>
+                            <td id="idc_date">27/10/1998</td>
+                            <td id="idc_starttime">13:40</td>
+                            <td id="idc_endtime">17:30</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col mx-auto mt-4">
+                    <h4>Meetings I've been invited to</h4>
+                    <div id="id_alert" class="alert alert-danger mx-auto px-2 py-0" style="display: none"></div>
+                    <table id="id_invitedAtList" class="table-bordered">
                         <thead>
                         <tr>
                             <th>Title</th>
@@ -61,31 +86,6 @@
                             <td id="id_date">27/10/1998</td>
                             <td id="id_starttime">13:40</td>
                             <td id="id_endtime">17:30</td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col mx-auto mt-4">
-                    <h4>Meetings I've been invited</h4>
-                    <div id="id_c_alert" class="alertmessage"></div>
-                    <table id="id_CreatedList" class="boxed">
-                        <thead>
-                        <tr>
-                            <th>Title</th>
-                            <th>Date</th>
-                            <th>Start</th>
-                            <th>End</th> <!-- start + duration -->
-                            <th>Max. # Participants</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr>
-                            <td id="idc_title">test</td>
-                            <td id="idc_date">27/10/1998</td>
-                            <td id="idc_starttime">13:40</td>
-                            <td id="idc_endtime">17:30</td>
                         </tr>
                         </tbody>
                     </table>
