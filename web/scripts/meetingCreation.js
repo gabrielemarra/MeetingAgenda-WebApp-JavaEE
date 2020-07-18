@@ -1,3 +1,9 @@
+function resetInviteError() {
+    let titleAlert = document.getElementById("id_modal_alert");
+    titleAlert.textContent = "";
+    titleAlert.style.display = "none";
+}
+
 (function () { // avoid variables ending up in the global scope
     function InvitationList(_alert, _listcontainer) {
 
@@ -186,6 +192,8 @@
         return parseInt(sessionStorage.getItem("invitationAttempts"))
     }
 
+
+
     function updateLocalAttempts() {
         makeCall("POST", '../GetAttempts', getMeetingInfoForm(), function (req) {
             if (req.readyState == XMLHttpRequest.DONE) {
@@ -243,18 +251,20 @@
             titleAlert.style.display = "block";
             //todo + reminder appena seleziona qualcuno l'errore scompare
             return;
-        } else if (userSelected.length > JSON.parse(sessionStorage.getItem("availableUsers")).length){
+        } else if (userSelected.length > getAvailableUsers()){
             let titleAlert = document.getElementById("id_modal_alert");
             titleAlert.textContent = "Local form error";
             titleAlert.style.display = "block";
+            //homepage con errore del text content
             return;
         }
         else if ("".length === 9999) {
             //todo metodo marra per controllare se
         }
         else if (userSelected.length > getMeetingInfo().maxParticipants - 1) {
+            increaseInvitationAttempts();
             let titleAlert = document.getElementById("id_modal_alert");
-            let numberDesect = userSelected.length - getMeetingInfo().maxParticipants - 1;
+            let numberDesect = userSelected.length - (getMeetingInfo().maxParticipants - 1);
             titleAlert.textContent = "Too many user selected. Deselect at least " + numberDesect + ((numberDesect > 1 ) ? " users." : " user.");
             titleAlert.style.display = "block";
 
@@ -268,7 +278,8 @@
                             switch (req.status) {
                                 case 200:
                                     //todo
-                                    //close modal and refresh tables
+                                    alert(req.responseText);
+                                    closeModalAndRefreshTables();
                                     break;
                                 case 400: // bad request
                                     // document.getElementById("errormessage").textContent = message;
@@ -360,6 +371,30 @@
         // Return the array if it is non-empty, or null
         return checkedID;
     }
+
+    function closeModal() {
+        $('#invitationModal').modal('hide')
+    }
+
+    function closeModalAndRefreshTables() {
+        closeModal();
+
+        let invitedList = new InvitedAtList(
+            document.getElementById("id_alert"),
+            document.getElementById("id_invitedAtList"));
+        let createdMeetingsList = new CreatedList(
+            document.getElementById("id_c_alert"),
+            document.getElementById("id_CreatedList"));
+        invitedList.reset();
+        createdMeetingsList.reset();
+        invitedList.show();
+        createdMeetingsList.show();
+    }
+
+    function getAvailableUsers() {
+        return JSON.parse(sessionStorage.getItem("availableUsers"));
+    }
+
 
 
 })();

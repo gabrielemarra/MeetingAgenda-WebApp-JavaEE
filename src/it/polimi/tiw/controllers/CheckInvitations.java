@@ -149,14 +149,13 @@ public class CheckInvitations extends HttpServlet {
             meetingsDAO.addMeetingToDatabase(meetingWithInvitationsList);
             cleanTempDB(tempMeeting);
         } catch (SQLException throwables) {
-            //todo add error
+            //todo aggiornare a JS cancel meeting creation
             cancelMeetingCreation(response, session, tempMeeting);
             return;
         }
-
-        String path = getServletContext().getContextPath();
-        path += "/HomePage";
-        response.sendRedirect(path);
+        response.setStatus(HttpServletResponse.SC_OK);
+        response.setContentType("html/text");
+        response.getWriter().println("Meeting created correctly");
     }
 
     private void cancelMeetingCreation(HttpServletResponse response, HttpSession session, TempMeeting tempMeeting) throws IOException, SQLException {

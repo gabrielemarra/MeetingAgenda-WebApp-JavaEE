@@ -117,15 +117,17 @@
                         <form action="#" id="id_invitation_form">
                             <div class="mx-auto">
                                 <h5>Invite</h5>
-                                <div id="id_modal_alert" class="alert alert-danger mx-auto"></div>
+
                                 <!-- DYNAMIC -->
                                 <div id="id_invitation_list">
 
                                 </div>
                             </div>
+                            <div id="id_modal_alert" class="alert alert-danger mx-auto" style="display: none"></div>
                         </form>
                     </div>
                     <div class="modal-footer">
+
                         <button type="button" class="btn btn-secondary" data-dismiss="modal" id="id_modal_cancel_button">Close</button>
                         <button type="button" class="btn btn-primary" id="id_modal_submit_button">Invite</button>
                     </div>
@@ -136,7 +138,7 @@
         <template id="id_invite_user">
             <fieldset class="my-2">
                 <div class="form-check">
-                    <input class="form-check-input" type="checkbox" />
+                    <input class="form-check-input" type="checkbox" onclick="resetInviteError()"/>
                     <label class="form-check-label">User Already Selected</label>
                 </div>
             </fieldset>
