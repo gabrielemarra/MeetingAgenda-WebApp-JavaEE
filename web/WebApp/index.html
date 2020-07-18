@@ -1,78 +1,230 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>My Agenda</title>
 
-    <script src="../util.js" charset="utf-8" defer></script> <!-- defer: execute the script after the page has finished parsing -->
-    <script src="../meetingManager.js" charset="utf-8" defer></script>
+    <script src="../scripts/util.js" charset="utf-8" defer></script>
+    <!-- defer: execute the script after the page has finished parsing -->
+    <script src="../scripts/meetingManager.js" charset="utf-8" defer></script>
+    <script src="../scripts/userData.js" charset="utf-8" defer></script>
+    <script src="../scripts/meetingCreation.js" charset="utf-8" defer></script>
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
+          integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+            integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+            crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"
+            integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI"
+            crossorigin="anonymous"></script>
+
+    <link rel="stylesheet" href="../css/webapp.css">
 </head>
 <body>
-<header><h3>My Agenda</h3></header>
-<div class="content">
-    <div>
-        <table style="border: 1px solid black">
-            <tr>
-                <td>
-                    <div class="table_content" style="border: 1px solid aquamarine">
-                        <h5>Invited at</h5>
-                        <div class="tableList">
-                            <table id="id_invitedAtList" class="boxed">
-                                <thead>
-                                <tr>
-                                    <th>Title</th>
-                                    <th>Invited by</th>
-                                    <th>Date</th>
-                                    <th>Start</th>
-                                    <th>End</th> <!-- start + duration -->
-                                </tr>
-                                </thead>
-                                <tbody >
-                                <tr>
-                                    <td id="id_title">test</td>
-                                    <td id="id_creator">root</td>
-                                    <td id="id_date">27/10/1998</td>
-                                    <td id="id_starttime">13:40</td>
-                                    <td id="id_endtime">17:30</td>
-                                </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </td>
-                <td>
-                    <div class="table_content" style="border: 1px solid aquamarine">
-                        <h5>My Meetings</h5>
-                        <div class="tableList">
-                            <table id="id_CreatedList" class="boxed">
-                                <thead>
-                                <tr>
-                                    <th>Title</th>
-                                    <th>Date</th>
-                                    <th>Start</th>
-                                    <th>End</th> <!-- start + duration -->
-                                    <th>Max. # Participants</th>
-                                </tr>
-                                </thead>
-                                <tbody >
-                                <tr>
-                                    <td id="idc_title">test</td>
-                                    <td id="idc_date">27/10/1998</td>
-                                    <td id="idc_starttime">13:40</td>
-                                    <td id="idc_endtime">17:30</td>
-                                </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </td>
-            </tr>
-        </table>
+
+<div class="container my-4" style="max-width: 1450px">
+    <div class="row m-auto">
+        <h1>Online Meeting Agenda</h1>
+    </div>
+    <div class="row m-auto">
+        <div class="col">
+            <p>Welcome to our site: <span id="id_userDispName">Name of the user</span></p>
+        </div>
+        <div class="col-4  text-right">
+            <span id="id_userEmail">user@email.com</span> |
+            <button type="button" class="btn btn-link" id="id_logout_button" onclick="logOut()">Logout</button>
+        </div>
     </div>
 
-    <div id="id_alert" class="alertmessage"></div>
+    <div class="row">
+        <div class="col-lg mx-auto">
+            <div class="row">
+                <div class="col mx-auto mt-4">
+                    <h4>Meetings I've created</h4>
+                    <div id="id_c_alert" class="alert alert-danger mx-auto px-2 py-0" style="display: none"></div>
+                    <table id="id_CreatedList" class="table-bordered">
+                        <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Date</th>
+                            <th>Start</th>
+                            <th>End</th> <!-- start + duration -->
+                            <th>Max. # Participants</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td id="idc_title">test</td>
+                            <td id="idc_date">27/10/1998</td>
+                            <td id="idc_starttime">13:40</td>
+                            <td id="idc_endtime">17:30</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col mx-auto mt-4">
+                    <h4>Meetings I've been invited to</h4>
+                    <div id="id_alert" class="alert alert-danger mx-auto px-2 py-0" style="display: none"></div>
+                    <table id="id_invitedAtList" class="table-bordered">
+                        <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Invited by</th>
+                            <th>Date</th>
+                            <th>Start</th>
+                            <th>End</th> <!-- start + duration -->
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td id="id_title">test</td>
+                            <td id="id_creator">root</td>
+                            <td id="id_date">27/10/1998</td>
+                            <td id="id_starttime">13:40</td>
+                            <td id="id_endtime">17:30</td>
+                        </tr>
+                        </tbody>
+                    </table>
 
+                </div>
+            </div>
+        </div>
+
+
+        <div class="col-lg-4 mx-auto mt-4">
+            <h4>Create a new Meeting</h4>
+            <div class="alert alert-danger" id="id_creation_alert" style="display: none">ERROR: *ERROR TEXT*
+            </div>
+            <form action="#" id="creationMeetingForm">
+                <div class="form-group row">
+                    <label class="col-form-label" for="title-input">Meeting Title:</label>
+                    <input class="form-control" type="text" name="title" id="title-input"
+                           placeholder="Meeting Title"
+                           value="Debug" autocomplete="off">
+                </div>
+                <div class="alert alert-danger mx-auto px-2 py-0" id="id_title_alert" style="display: none">ERROR</div>
+                <div class="form-group row">
+                    <label class="form-label" for="duration-input">Duration:</label>
+                    <input class="form-control" type="number" name="duration" id="duration-input"
+                           placeholder="60"
+                           value="60" autocomplete="off">
+                </div>
+                <div class="alert alert-danger mx-auto px-2 py-0" id="id_duration_alert" style="display: none">ERROR</div>
+                <div class="form-group row">
+                    <label class="col-form-label" for="max-participants-input">Max Participants:</label>
+                    <input class="form-control" type="number" name="limit" id="max-participants-input"
+                           placeholder="10"
+                           value="4" autocomplete="off">
+                </div>
+                <div class="alert alert-danger mx-auto px-2 py-0" id="id_participants_alert" style="display: none">ERROR</div>
+                <div class="form-group row">
+                    <label class="col-form-label" for="date-input">Date:</label>
+                    <input class="form-control" type="date" name="date" id="date-input" value="20-20-2053" autocomplete="off">
+                </div>
+                <div class="alert alert-danger mx-auto px-2 py-0" id="id_date_alert" style="display: none">ERROR</div>
+                <div class="form-group row">
+                    <label class="col-form-label" for="time-input">Time:</label>
+                    <input class="form-control" type="time" name="time" id="time-input" value="20:29" autocomplete="off">
+                </div>
+                <div class="alert alert-danger mx-auto px-2 py-0" id="id_time_alert" style="display: none">ERROR</div>
+                <div class="form-group row">
+
+                    <button class="btn-primary form-group col" type="button" value="submit"
+                            id="creationMeetingSubmit"
+                            name="submit">Create Meeting
+                    </button>
+                    <button class="btn-secondary form-group col offset-1" type="button" value="cancel"
+                            id="creationMeetingCancel" name="cancel">Cancel
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
 
+<!-- Modal Cancellation -->
+<div class="container mx-auto my-4">
+    <!-- Modal -->
+    <div class="modal fade" id="cancellationModal" tabindex="-1" role="dialog"
+         aria-labelledby="cancellationModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="cancellationModalLabel">Meeting Cancellation</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-warning text-center" role="alert">Three attempts to define a meeting with too many
+                        participants,
+                        the
+                        meeting won't be created.
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary mx-auto" data-dismiss="modal">Close
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Modal Invitation -->
+<div class="container mx-auto my-4">
+    <!-- Modal -->
+    <div class="modal fade" id="invitationModal" tabindex="-1" role="dialog"
+         aria-labelledby="invitationModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="invitationModalLabel">Invitation List</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form action="#" id="id_invitation_form">
+                        <div class="mx-auto">
+                            <h5>Invite</h5>
+
+                            <!-- DYNAMIC -->
+                            <div id="id_invitation_list">
+
+                            </div>
+                        </div>
+                        <div id="id_modal_alert" class="alert alert-danger mx-auto"
+                             style="display: none"></div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal"
+                            id="id_modal_cancel_button">Close
+                    </button>
+                    <button type="button" class="btn btn-primary" id="id_modal_submit_button">Invite
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<template id="id_invite_user">
+    <fieldset class="my-2">
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" onclick="resetInviteError()"/>
+            <label class="form-check-label">User Already Selected</label>
+        </div>
+    </fieldset>
+</template>
 </body>
 </html>

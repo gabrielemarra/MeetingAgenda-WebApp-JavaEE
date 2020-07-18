@@ -1,17 +1,14 @@
-
 window.addEventListener("load", () => {
     let invitedList;
     let createdMeetingsList;
     if (sessionStorage.getItem("username") == null) {
         window.location.href = "../index.html";
     } else {
-        // pageOrchestrator.start(); // initialize the components
-        //pageOrchestrator.refresh();
         invitedList = new InvitedAtList(
             document.getElementById("id_alert"),
             document.getElementById("id_invitedAtList"));
         createdMeetingsList = new CreatedList(
-            document.getElementById("id_alert"),
+            document.getElementById("id_c_alert"),
             document.getElementById("id_CreatedList"));
         invitedList.reset();
         createdMeetingsList.reset();
@@ -27,20 +24,20 @@ function InvitedAtList(_alert, _listcontainer) {
     this.alert = _alert;
     this.listcontainer = _listcontainer;
 
-    this.reset = function() {
+    this.reset = function () {
         this.listcontainer.style.visibility = "hidden";
     };
 
-    this.show = function() {
+    this.show = function () {
         let self = this;
         makeCall("GET", "../GetMeetingsData?my=false", null,
-            function(req) {
+            function (req) {
                 if (req.readyState == 4) {
                     var message = req.responseText;
                     if (req.status == 200) {
                         var invitedAtMeetings = JSON.parse(req.responseText);
-                        if (invitedAtMeetings.size == 0) {
-                            self.alert.textContent = "You've not been invited to any meeting yet";
+                        if (invitedAtMeetings.length == 0) {
+                            self.alert.textContent += "You've not been invited to any meeting yet";
                             return;
                         }
                         self.update(invitedAtMeetings); // self visible by closure
@@ -53,7 +50,7 @@ function InvitedAtList(_alert, _listcontainer) {
         );
     };
 
-    this.update = function(arrayMeetings) {
+    this.update = function (arrayMeetings) {
 
         var row, cell;
         this.listcontainer.innerHTML = "<thead>\n" +
@@ -69,7 +66,7 @@ function InvitedAtList(_alert, _listcontainer) {
         var self = this;
 
         //print a table row for each meeting
-        arrayMeetings.forEach(function(meeting) { // self visible here, not this
+        arrayMeetings.forEach(function (meeting) { // self visible here, not this
 
             row = document.createElement("tr");
 
@@ -96,10 +93,7 @@ function InvitedAtList(_alert, _listcontainer) {
             self.listcontainer.appendChild(row);
         });
         this.listcontainer.style.visibility = "visible";
-
     }
-
-
 }
 
 function CreatedList(_alert, _listcontainer) {
@@ -107,20 +101,21 @@ function CreatedList(_alert, _listcontainer) {
     this.alert = _alert;
     this.listcontainer = _listcontainer;
 
-    this.reset = function() {
+    this.reset = function () {
         this.listcontainer.style.visibility = "hidden";
     };
 
-    this.show = function() {
+    this.show = function () {
         let self = this;
         makeCall("GET", "../GetMeetingsData?my=true", null,
-            function(req) {
+            function (req) {
                 if (req.readyState == 4) {
                     var message = req.responseText;
                     if (req.status == 200) {
                         var invitedAtMeetings = JSON.parse(req.responseText);
-                        if (invitedAtMeetings.size == 0) {
-                            self.alert.textContent = "You've not been invited to any meeting yet";
+                        if (invitedAtMeetings.length == 0) {
+                            self.alert.textContent += "You have not yet created a meeting.";
+
                             return;
                         }
                         self.update(invitedAtMeetings); // self visible by closure
@@ -133,7 +128,7 @@ function CreatedList(_alert, _listcontainer) {
         );
     };
 
-    this.update = function(arrayMeetings) {
+    this.update = function (arrayMeetings) {
 
         var row, cell;
         this.listcontainer.innerHTML = "                                <thead>\n" +
@@ -149,15 +144,13 @@ function CreatedList(_alert, _listcontainer) {
         var self = this;
 
         //print a table row for each meeting
-        arrayMeetings.forEach(function(meeting) { // self visible here, not this
+        arrayMeetings.forEach(function (meeting) { // self visible here, not this
 
             row = document.createElement("tr");
 
             cell = document.createElement("td");
             cell.textContent = meeting.title;
             row.appendChild(cell);
-
-
 
             var dateCell = document.createElement("td");
             dateCell.textContent = getDateString(meeting);
@@ -178,20 +171,40 @@ function CreatedList(_alert, _listcontainer) {
             self.listcontainer.appendChild(row);
         });
         this.listcontainer.style.visibility = "visible";
-
     }
+}
 
+function logOut() {
+    makeCall("GET", '../Logout', null, function (req) {
+        if (req.readyState == XMLHttpRequest.DONE) {
+            switch (req.status) {
+                case 200:
+                    localStorage.removeItem("username");
+                    window.location.href = "../index.html";
+                    break;
+                case 400: // bad request
+                    // document.getElementById("errormessage").textContent = message;
+                    break;
+                case 401: // unauthorized
+                    // document.getElementById("errormessage").textContent = message;
+                    break;
+                case 500: // server error
+                    //document.getElementById("errormessage").textContent = message;
+                    break;
+            }
+        }
+    });
 
 }
 
 function getDateString(meeting) {
     return meeting.date.year + "-" + meeting.date.month + "-" + getDayFormatted(meeting.date.day);
 }
+
 function getDayFormatted(day) {
-    if (day<10) {
+    if (day < 10) {
         return "0" + day;
-    }
-    else return day;
+    } else return day;
 }
 
 function getTimeFormatted(time) {
@@ -202,8 +215,4 @@ function getEndTimeFormatted(startTime, duration) {
     var h = startTime.hour;
     var m = startTime.minute;
     var s = startTime.second;
-
-
-
 }
-

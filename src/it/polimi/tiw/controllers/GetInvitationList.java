@@ -1,11 +1,14 @@
+
 package it.polimi.tiw.controllers;
 
+import com.google.gson.Gson;
 import it.polimi.tiw.auxiliary.ConnectionManager;
 import it.polimi.tiw.beans.User;
+import it.polimi.tiw.dao.UsersDAO;
 
-import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.UnavailableException;
+import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -14,14 +17,15 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.List;
 
-@WebServlet("/MeetingCancellation")
-public class MeetingCancellation extends HttpServlet {
+@WebServlet("/GetInvitationList")
+@MultipartConfig
+public class GetInvitationList extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private Connection connection;
 
-
-    public void init() throws ServletException{
+    public void init() throws ServletException {
         try {
             connection = ConnectionManager.tryConnection(getServletContext());
         } catch (ClassNotFoundException e) {
@@ -31,20 +35,26 @@ public class MeetingCancellation extends HttpServlet {
         }
     }
 
-    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        doGet(request, response);
+    }
+
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("user");
 
-        String path = "/WEB-INF/MeetingCancellation.html";
-        ServletContext servletContext = getServletContext();
+        UsersDAO usersDAO = new UsersDAO(connection);
 
-//        ctx.setVariable("currentUserEmail", user.getEmail());
-//        ctx.setVariable("currentUserDislayedName", user);
-    }
+        try {
+            List<User> allAvailableUsers = usersDAO.getUsersToInvite(user.getId()); //all the available users
 
-    @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        doGet(req, resp);
+            Gson gson = new Gson();
+            String json = gson.toJson(allAvailableUsers);
+            response.setContentType("application/json");
+            response.setCharacterEncoding("UTF-8");
+            response.getWriter().write(json);
+        } catch (SQLException e) {
+            //todo
+        }
     }
 }

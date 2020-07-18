@@ -1,31 +1,30 @@
 package it.polimi.tiw.controllers;
 
+import com.google.gson.Gson;
+import it.polimi.tiw.auxiliary.ConnectionManager;
 import it.polimi.tiw.beans.TempMeeting;
 import it.polimi.tiw.beans.User;
 import it.polimi.tiw.dao.TempMeetingDAO;
+import org.apache.commons.text.StringEscapeUtils;
 
-
-import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
-
 import javax.servlet.UnavailableException;
+import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.security.InvalidParameterException;
 import java.sql.Connection;
-
-import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.time.*;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 
 @WebServlet("/CheckMeetingParameters")
+@MultipartConfig
 public class CheckMeetingParameters extends HttpServlet {
     private static final long serialVersionUID = 1L;
     Connection connection;
@@ -36,14 +35,7 @@ public class CheckMeetingParameters extends HttpServlet {
 
     public void init() throws ServletException {
         try {
-            ServletContext context = getServletContext();
-            String driver = context.getInitParameter("dbDriver");
-            String url = context.getInitParameter("dbUrl");
-            String user = context.getInitParameter("dbUser");
-            String password = context.getInitParameter("dbPassword");
-            Class.forName(driver);
-            connection = DriverManager.getConnection(url, user, password);
-
+            connection = ConnectionManager.tryConnection(getServletContext());
         } catch (ClassNotFoundException e) {
             throw new UnavailableException("Can't load database driver");
         } catch (SQLException e) {
@@ -53,6 +45,7 @@ public class CheckMeetingParameters extends HttpServlet {
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        //todo
         response.sendRedirect(getServletContext().getContextPath() + "/HomePage?error=Invalid request to the server");
     }
 
@@ -60,44 +53,48 @@ public class CheckMeetingParameters extends HttpServlet {
             throws ServletException, IOException {
         HttpSession session = request.getSession();
         User creatorUser = (User) session.getAttribute("user");
+
+        if (creatorUser == null) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.getWriter().println("Invalid credentials");
+            return;
+        }
         String path = getServletContext().getContextPath();
 
         // fetch meeting parameters from the request object
         TempMeeting tempMeeting = new TempMeeting();
 
         try {
-            tempMeeting.setTitle(request.getParameter("title"));
+            tempMeeting.setTitle(StringEscapeUtils.escapeJava(request.getParameter("title")));
             tempMeeting.setDuration(Integer.parseInt(request.getParameter("duration")));
             tempMeeting.setMaxParticipants(Integer.parseInt(request.getParameter("limit")));
             tempMeeting.setIdCreator(creatorUser.getId());
             tempMeeting.setLocalDate(getDateFromRequestParameter(request.getParameter("date")));
             tempMeeting.setLocalTime(LocalTime.parse(request.getParameter("time")));
-        } catch (DateTimeParseException | NumberFormatException | NullPointerException e) {
-            path += "/HomePage?error=";
-            path += "Invalid Arguments";
-            response.sendRedirect(path);
+        } catch (DateTimeParseException e) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.getWriter().println("invalid date/time");
+            return;
+        } catch (NumberFormatException e) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.getWriter().println("invalid integer value");
             return;
         }
 
         //if meeting fetch has been successful
+        TempMeeting.checkInsertedMeeting(tempMeeting);
+        TempMeetingDAO tempMeetingDAO = new TempMeetingDAO(connection);
         try {
-            TempMeeting.checkInsertedMeeting(tempMeeting);
-            request.setAttribute("tempMeetingInfo", tempMeeting);
-            RequestDispatcher rd = request.getRequestDispatcher("/Invite");
-            TempMeetingDAO tmdao = new TempMeetingDAO(connection);
-            try {
-                tmdao.addTempMeetingToDatabase(tempMeeting);
-                rd.forward(request, response);
-            } catch (SQLException e) {
-                path += "/HomePage?error=";
-                path += "Error writing temporary meeting to database";
-                response.sendRedirect(path);
-            }
-        } catch (InvalidParameterException e) {
-            //redirect the client to Homepage
-            path += "/HomePage?error=";
-            path += e.getMessage();
-            response.sendRedirect(path);
+            tempMeetingDAO.addTempMeetingToDatabase(tempMeeting);
+
+            Gson gson = new Gson();
+            String json = gson.toJson(tempMeeting);
+            response.setContentType("application/json");
+            response.setCharacterEncoding("UTF-8");
+            response.getWriter().write(json);
+        } catch (SQLException e) {
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            response.getWriter().println("internal server error: " + e.getMessage());
         }
     }
 
