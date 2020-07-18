@@ -24,13 +24,13 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 
 
-@WebServlet("/IncreaseAttemps")
+@WebServlet("/IncreaseAttempts")
 @MultipartConfig
-public class IncreaseAttemps extends HttpServlet {
+public class IncreaseAttempts extends HttpServlet {
     private static final long serialVersionUID = 1L;
     Connection connection;
 
-    public IncreaseAttemps() {
+    public IncreaseAttempts() {
         super();
     }
 
@@ -88,7 +88,6 @@ public class IncreaseAttemps extends HttpServlet {
             } catch (SQLException e) {
                 e.printStackTrace();
             }
-            return;
             //at least one attempt left:
         } else if (meetingCache.getAttempts() + 1 < 4) {
             try {
