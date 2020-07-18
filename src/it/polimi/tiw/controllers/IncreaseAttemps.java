@@ -23,10 +23,8 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 
-import static org.apache.commons.lang.StringEscapeUtils.escapeJava;
 
-
-@WebServlet("/CheckMeetingParameters")
+@WebServlet("/IncreaseAttemps")
 @MultipartConfig
 public class IncreaseAttemps extends HttpServlet {
     private static final long serialVersionUID = 1L;
@@ -56,8 +54,8 @@ public class IncreaseAttemps extends HttpServlet {
         TempMeetingDAO tMDao = new TempMeetingDAO(connection);
 
         //check synthax of form fields
-        String formMeetingTitle = escapeJava(request.getParameter("meetingTitle"));
-        String formMeetingDateTime = escapeJava(request.getParameter("meetingDateTime"));
+        String formMeetingTitle = StringEscapeUtils.escapeJava(request.getParameter("meetingTitle"));
+        String formMeetingDateTime = StringEscapeUtils.escapeJava(request.getParameter("meetingDateTime"));
         LocalDateTime dateTime = LocalDateTime.parse(formMeetingDateTime, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
         LocalDate localDate = dateTime.toLocalDate();
         LocalTime localTime = dateTime.toLocalTime();

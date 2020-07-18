@@ -114,7 +114,7 @@
                         </button>
                     </div>
                     <div class="modal-body">
-                        <form action="CheckInvitations" method="post">
+                        <form action="#" id="id_invitation_form">
                             <div class="mx-auto">
                                 <h5>Invite</h5>
                                 <div id="id_modal_alert" class="alertmessage"></div>
@@ -123,13 +123,13 @@
 
                                 </div>
                             </div>
-                            <input type="hidden" id="meetingTitle" name="meetingTitle" value="Test_Meeting_Title">
-                            <input type="hidden" id="meetingDateTime" name="meetingDateTime" value="DATE_MEETING">
+                            <input type="hidden" id="id_meetingTitle" name="meetingTitle" value="Test_Meeting_Title">
+                            <input type="hidden" id="id_meetingDateTime" name="meetingDateTime" value="DATE_MEETING">
                         </form>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary">Invite</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal" id="id_modal_cancel_button">Close</button>
+                        <button type="button" class="btn btn-primary" id="id_modal_submit_button">Invite</button>
                     </div>
                 </div>
             </div>
