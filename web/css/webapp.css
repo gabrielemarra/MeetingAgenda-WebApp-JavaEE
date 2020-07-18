@@ -1,0 +1,12 @@
+table {
+    table-layout: fixed;
+    text-align: center
+}
+
+th, td {
+    white-space: nowrap;
+    max-width: 300px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding: 7px 10px;
+}
