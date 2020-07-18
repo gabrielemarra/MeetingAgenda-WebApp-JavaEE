@@ -2,7 +2,13 @@ package it.polimi.tiw.controllers;
 
 import it.polimi.tiw.beans.TempMeeting;
 import it.polimi.tiw.beans.User;
+import it.polimi.tiw.dao.InvitationDAO;
+import it.polimi.tiw.dao.TempMeetingDAO;
 import it.polimi.tiw.dao.UsersDAO;
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.context.WebContext;
+import org.thymeleaf.templatemode.TemplateMode;
+import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -13,6 +19,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -24,9 +31,15 @@ import java.util.stream.Collectors;
 public class Invite extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private Connection connection;
+    private TemplateEngine templateEngine;
 
     public void init() throws ServletException {
         ServletContext servletContext = getServletContext();
+        ServletContextTemplateResolver templateResolver = new ServletContextTemplateResolver(servletContext);
+        templateResolver.setTemplateMode(TemplateMode.HTML);
+        this.templateEngine = new TemplateEngine();
+        this.templateEngine.setTemplateResolver(templateResolver);
+        templateResolver.setSuffix(".html");
         try {
             ServletContext context = getServletContext();
             String driver = context.getInitParameter("dbDriver");
@@ -65,6 +78,15 @@ public class Invite extends HttpServlet {
         TempMeeting tempMeeting = (TempMeeting) request.getAttribute("tempMeetingInfo");
 
         String path = "/WEB-INF/Invite.html";
+        ServletContext servletContext = getServletContext();
+        final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
+        ctx.setVariable("notSelectedUsers", notSelectedUsers);
+        ctx.setVariable("alreadySelectedUsers", alreadySelectedUsers);
+        if (numberOfUsersToDeselect > 0) {
+            ctx.setVariable("numberOfUsersToDeselect", numberOfUsersToDeselect);
+        }
+        ctx.setVariable("tempMeeting", tempMeeting);
+        templateEngine.process(path, ctx, response.getWriter());
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
