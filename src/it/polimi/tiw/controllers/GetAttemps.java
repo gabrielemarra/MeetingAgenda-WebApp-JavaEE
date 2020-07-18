@@ -23,7 +23,6 @@ import java.time.format.DateTimeFormatter;
 
 import static org.apache.commons.lang.StringEscapeUtils.escapeJava;
 
-
 @WebServlet("/GetAttempts")
 @MultipartConfig
 public class GetAttemps extends HttpServlet {
@@ -85,7 +84,7 @@ public class GetAttemps extends HttpServlet {
         response.setCharacterEncoding("UTF-8");
         response.getWriter().println(meetingCache.getAttempts());
 
-        
+
     }
 
     private void cancelMeetingCreation(HttpServletResponse response, HttpSession session, TempMeeting tempMeeting) throws IOException, SQLException {

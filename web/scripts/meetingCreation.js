@@ -69,6 +69,7 @@
 
     }
 
+    //when the user tries to submit a meeting from the home page
     document.getElementById("creationMeetingSubmit").addEventListener('click', (e) => {
         var target = e.target;
         var form = target.closest("form");
@@ -207,10 +208,19 @@
     //     document.getElementById("id_meetingDateTime").setAttribute("value", meetingDateString);
     // }
 
+
+    //the user submits a meeting with the invited users list
     document.getElementById("id_modal_submit_button").addEventListener('click', (e) => {
         var test = getInvitationAttempts();
 
         var form = document.getElementById("id_invitation_form");
+        var userSelected = getCheckedUserIDFromForm();
+        if (userSelected.length == 0) {
+            return;
+        } else if (userSelected.length > getMeetingInfo().maxParticipants - 1) {
+            return;
+        }
+        //todo chiamare solo se il controllo locale è andato bene
         if (form.checkValidity()) {
             makeCall("POST", '../CheckInvitations', getInvitationDataForm(),
                 function (req) {
