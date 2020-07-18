@@ -80,7 +80,8 @@ function resetInviteError() {
     document.getElementById("creationMeetingSubmit").addEventListener('click', (e) => {
         var target = e.target;
         var form = target.closest("form");
-        if (form.checkValidity()) {
+        if (form.checkValidity() && checkAllMeetingInfo()) {
+            setGenericCreationAlert();
             makeCall("POST", '../CheckMeetingParameters', form,
                 function (req) {
                     if (req.readyState == XMLHttpRequest.DONE) {
@@ -90,7 +91,7 @@ function resetInviteError() {
                                 saveMeetingInfo(req.responseText);
                                 // setMeetingInfoIntoInvitationForm();
                                 resetInvitationAttempts();
-                                resetStatusMeetingForm();
+                                resetCreatingInfoForm();
                                 //open modal
                                 prepareAndShowModal();
                                 break;
@@ -109,14 +110,43 @@ function resetInviteError() {
             );
         } else {
             form.reportValidity();
+            setGenericCreationAlert();
         }
     });
+
+    function setGenericCreationAlert() {
+        if (!checkAllMeetingInfo()) {
+            const titleAlert = document.getElementById("id_creation_alert");
+            titleAlert.textContent = "Please verify all the information.";
+            titleAlert.style.display = "block";
+        } else {
+            const titleAlert = document.getElementById("id_creation_alert");
+            titleAlert.textContent = "";
+            titleAlert.style.display = "none";
+        }
+    }
+
+    function checkAllMeetingInfo() {
+        let title = document.getElementById("title-input").value;
+        let duration = document.getElementById("duration-input").value;
+        let maxParticipants = document.getElementById("max-participants-input").value;
+        let dateRead = document.getElementById("date-input").value;
+        let timeRead = document.getElementById("time-input").value;
+
+        let now = new Date();
+        now.setTime(now.getTime() + 2 * 3600 * 1000);
+        let dateNow = now.toISOString().split("T")[0];
+        let timeNow = now.toISOString().split("T")[1].substring(0, 5);
+
+        return !(titleIsInvalid(title) || durationIsInvalid(duration) || maxParticipantsAreInvalid(maxParticipants)
+            || dateIsInvalid(dateRead, dateNow) || timeIsInvalid(dateRead, dateNow, timeRead, timeNow));
+    }
 
     document.getElementById("title-input").onchange = realtimeValidateTitle;
 
     function realtimeValidateTitle(e) {
         var title = e.target.value;
-        if (title === "" || title.length >= 48 || title.length < 3) {
+        if (titleIsInvalid(title)) {
             e.target.className = "form-control is-invalid"
             const titleAlert = document.getElementById("id_title_alert");
             titleAlert.textContent = "Invalid title";
@@ -129,44 +159,185 @@ function resetInviteError() {
         }
     }
 
+    function resetTitleStatus() {
+        let title = document.getElementById("title-input");
+        const titleAlert = document.getElementById("id_title_alert");
+        // title.value = title.defaultValue;
+        titleAlert.textContent = "";
+        titleAlert.style.display = "none";
+        title.className="form-control";
+    }
+
+    function titleIsInvalid(title) {
+        return title === "" || title.length >= 48 || title.length < 3;
+    }
+
     document.getElementById("duration-input").onchange = realtimeValidateDuration;
 
     function realtimeValidateDuration(e) {
-        var duration = e.target.value;
-        if (duration === "" || parseInt(duration) < 5) {
+        let duration = e.target.value;
+        const durationAlert = document.getElementById("id_duration_alert");
+        if (durationIsInvalid(duration)) {
             e.target.className = "form-control is-invalid"
-            const titleAlert = document.getElementById("id_duration_alert");
-            titleAlert.textContent = "Meeting duration is too short, at least 5 minutes";
-            titleAlert.style.display = "block";
+            durationAlert.textContent = "Meeting duration is too short, at least 5 minutes";
+            durationAlert.style.display = "block";
         } else {
             e.target.className = "form-control is-valid"
-            const titleAlert = document.getElementById("id_duration_alert");
-            titleAlert.textContent = "";
-            titleAlert.style.display = "none";
+            durationAlert.textContent = "";
+            durationAlert.style.display = "none";
         }
+    }
+
+    function resetDurationStatus() {
+        let duration = document.getElementById("title-input");
+        const durationAlert = document.getElementById("id_duration_alert");
+        // duration.value = duration.defaultValue;
+        durationAlert.textContent = "";
+        durationAlert.style.display = "none";
+        duration.className="form-control";
+    }
+
+    function durationIsInvalid(duration) {
+        return duration === "" || parseInt(duration) < 5;
     }
 
     document.getElementById("max-participants-input").onchange = realtimeValidateParticipants;
 
     function realtimeValidateParticipants(e) {
-        var duration = e.target.value;
-        if (duration === "" || parseInt(duration) < 2) {
+        let maxParticipants = e.target.value;
+        const maxParticipantsAlert = document.getElementById("id_participants_alert");
+        if (maxParticipantsAreInvalid(maxParticipants)) {
             e.target.className = "form-control is-invalid"
-            const titleAlert = document.getElementById("id_participants_alert");
-            titleAlert.textContent = "Invalid max participants, at least 2";
-            titleAlert.style.display = "block";
+            maxParticipantsAlert.textContent = "Invalid max participants, at least 2";
+            maxParticipantsAlert.style.display = "block";
         } else {
             e.target.className = "form-control is-valid"
-            const titleAlert = document.getElementById("id_participants_alert");
-            titleAlert.textContent = "";
-            titleAlert.style.display = "none";
+            maxParticipantsAlert.textContent = "";
+            maxParticipantsAlert.style.display = "none";
         }
     }
 
-    function resetStatusMeetingForm() {
-        document.getElementById("title-input").className="form-control"
-        document.getElementById("duration-input").className="form-control"
-        document.getElementById("max-participants-input").className="form-control"
+    function resetMaxParticipantsStatus() {
+        let maxParticipants = document.getElementById("title-input");
+        const maxParticipantsAlert = document.getElementById("id_participants_alert");
+        // maxParticipants.value = maxParticipants.defaultValue;
+        maxParticipantsAlert.textContent = "";
+        maxParticipantsAlert.style.display = "none";
+        maxParticipants.className="form-control";
+    }
+
+    function maxParticipantsAreInvalid(maxParticipants) {
+        return maxParticipants === "" || parseInt(maxParticipants) < 2;
+    }
+
+    document.getElementById("date-input").onchange = realtimeValidateDate;
+
+    function realtimeValidateDate(e) {
+        let now = new Date();
+        now.setTime(now.getTime() + 2 * 3600 * 1000);
+        let dateNow = now.toISOString().split("T")[0];
+        let timeNow = now.toISOString().split("T")[1].substring(0, 5);
+
+        let timeRead = document.getElementById("time-input").value;
+        let dateRead = e.target.value;
+
+        const dateAlert = document.getElementById("id_date_alert");
+        if (dateIsInvalid(dateRead, dateNow)) {
+            e.target.className = "form-control is-invalid";
+            dateAlert.textContent = "Invalid date, please select a future date";
+            dateAlert.style.display = "block";
+        } else if (dateRead === dateNow) {
+            e.target.className = "form-control is-valid"
+            dateAlert.textContent = "";
+            dateAlert.style.display = "none";
+
+            if (timeRead < timeNow) {
+                document.getElementById("time-input").className = "form-control is-invalid"
+                const titleAlert = document.getElementById("id_time_alert");
+                titleAlert.textContent = "Invalid time, please select a future time";
+                titleAlert.style.display = "block";
+            }
+
+        } else {
+            e.target.className = "form-control is-valid"
+            dateAlert.textContent = "";
+            dateAlert.style.display = "none";
+        }
+    }
+
+    function resetDateStatus() {
+        let date = document.getElementById("title-input");
+        const dateAlert = document.getElementById("id_date_alert");
+        // date.value = date.defaultValue;
+        dateAlert.textContent = "";
+        dateAlert.style.display = "none";
+        date.className="form-control";
+    }
+
+    function dateIsInvalid(dateRead, dateNow) {
+        return dateRead < dateNow;
+    }
+
+    document.getElementById("time-input").onchange = realtimeValidateTime;
+
+    function realtimeValidateTime(e) {
+        let now = new Date();
+        now.setTime(now.getTime() + 2 * 3600 * 1000);
+        let dateNow = now.toISOString().split("T")[0];
+        let timeNow = now.toISOString().split("T")[1].substring(0, 5);
+
+        let dateRead = document.getElementById("date-input").value;
+        let timeRead = e.target.value;
+
+        const timeAlert = document.getElementById("id_time_alert");
+        if (timeIsInvalid(dateRead, dateNow, timeRead, timeNow)) {
+            e.target.className = "form-control is-invalid"
+            timeAlert.textContent = "Invalid time, please select a future time";
+            timeAlert.style.display = "block";
+        } else {
+            e.target.className = "form-control is-valid"
+            timeAlert.textContent = "";
+            timeAlert.style.display = "none";
+        }
+    }
+
+    function resetTimeStatus() {
+        let time = document.getElementById("title-input");
+        const timeAlert = document.getElementById("id_time_alert");
+        // time.value = time.defaultValue;
+        timeAlert.textContent = "";
+        timeAlert.style.display = "none";
+        time.className="form-control";
+    }
+
+    function timeIsInvalid(dateRead, dateNow, timeRead, timeNow) {
+        return dateRead === dateNow && timeRead <= timeNow;
+    }
+
+    document.getElementById("creationMeetingCancel").addEventListener('click', (e) => {
+        resetCreatingInfoForm();
+    });
+
+
+    function resetCreatingInfoForm() {
+        let duration = document.getElementById("duration-input");
+        duration.value = duration.defaultValue;
+        duration.className="form-control";
+        let maxParticipants = document.getElementById("max-participants-input");
+        maxParticipants.value = maxParticipants.defaultValue;
+        maxParticipants.className="form-control";
+        let dateRead = document.getElementById("date-input");
+        dateRead.value = dateRead.defaultValue;
+        dateRead.className="form-control";
+        let timeRead = document.getElementById("time-input");
+        timeRead.value = timeRead.defaultValue;
+        timeRead.className="form-control";
+
+        resetTitleStatus();
+        resetDurationStatus();
+        resetMaxParticipantsStatus();
+        resetDateStatus();
+        resetTimeStatus();
     }
 
     function openModal() {
@@ -300,7 +471,7 @@ function resetInviteError() {
             return;
         }
 
-        if (getInvitationAttempts()>=3){
+        if (getInvitationAttempts() >= 3) {
             closeModalAndRefreshTables();
             alert("EROR");
             //todo show error
@@ -398,9 +569,9 @@ function resetInviteError() {
     }
 
     function cleanModalBody() {
-        document.getElementById("id_invitation_list").innerHTML="";
+        document.getElementById("id_invitation_list").innerHTML = "";
     }
-    
+
     function getAvailableUsers() {
         return JSON.parse(sessionStorage.getItem("availableUsers"));
     }
