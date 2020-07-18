@@ -83,13 +83,12 @@ public class IncreaseAttempts extends HttpServlet {
                 response.setStatus(HttpServletResponse.SC_OK);
                 response.setContentType("application/json");
                 response.setCharacterEncoding("UTF-8");
-                response.getWriter().println("maximum number of attempts reached");
-
+                response.getWriter().println(meetingCache.getAttempts()+1);
             } catch (SQLException e) {
                 e.printStackTrace();
             }
             //at least one attempt left:
-        } else if (meetingCache.getAttempts() + 1 < 4) {
+        } else {
             try {
                 tMDao.increaseAttempts(meetingCache);
                 response.setStatus(HttpServletResponse.SC_OK);
