@@ -36,11 +36,10 @@ public class Logout extends HttpServlet {
             throws ServletException, IOException {
 
         HttpSession session = request.getSession(false);
-       if (session != null) {
+        if (session != null) {
             session.invalidate();
         }
-        String indexPath = getServletContext().getContextPath() +  "/index.html";
-        response.sendRedirect(indexPath);
+        response.setStatus(HttpServletResponse.SC_OK);
     }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
