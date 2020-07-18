@@ -3,6 +3,7 @@ package it.polimi.tiw.controllers;
 import it.polimi.tiw.auxiliary.ConnectionManager;
 import it.polimi.tiw.beans.User;
 import it.polimi.tiw.dao.UsersDAO;
+import org.apache.commons.text.StringEscapeUtils;
 
 import javax.servlet.ServletException;
 import javax.servlet.UnavailableException;
@@ -18,6 +19,8 @@ import java.sql.SQLException;
 import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static org.apache.commons.text.StringEscapeUtils.escapeJava;
 
 @WebServlet("/SignUp")
 @MultipartConfig
@@ -46,8 +49,9 @@ public class SignUp extends HttpServlet {
             throws ServletException, IOException {
 
         String pwMain, pwConfirm;
-        pwMain = request.getParameter("password1");
-        pwConfirm = request.getParameter("password2");
+        pwMain = escapeJava(request.getParameter("password1"));
+        pwConfirm = escapeJava(request.getParameter("password2"));
+        String name = escapeJava(request.getParameter("displayedName"));
         if(!pwMain.equalsIgnoreCase(pwConfirm)) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             response.getWriter().println("passwords don't match");
@@ -59,8 +63,19 @@ public class SignUp extends HttpServlet {
                 UsersDAO usersDAO = new UsersDAO(connection);
                 User newBorn = new User();
                 newBorn.setEmail(email);
-                newBorn.setDisplayedName("TestUser" + new Random().nextInt(256));
+                newBorn.setDisplayedName(name);
                 newBorn.setPassword(pwMain);
+
+                if (pwMain.length() < 6 || pwConfirm.length() < 6) {
+                    response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                    response.getWriter().println("Password is too short, at least 6 characters");
+                    return;
+                }
+                if(name.length()<2 || name.length()>32) {
+                    response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                    response.getWriter().println("Inserted name is too " + (name.length()<2 ? "short" : "long") );
+                    return;
+                }
                 try {
                     usersDAO.addNewUser(newBorn);
                     request.getSession().setAttribute("user", newBorn);
@@ -71,8 +86,16 @@ public class SignUp extends HttpServlet {
                 } catch (SQLException e) {
                     //sql error
                     response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                    response.getWriter().println("internal server error");
-                    return;
+                    if(e.getMessage().contains("Duplicate entry")) {
+                        response.getWriter().println("already existing email");
+                        return;
+                    }
+                    else if(e.getMessage().contains("be null")) {
+                        response.getWriter().println("fields can't be null");
+                        return;
+                    }
+
+
                 }
             }
             else {

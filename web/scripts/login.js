@@ -2,6 +2,10 @@
  * Login management
  */
 
+function showPasswordAlert(msg) {
+    document.getElementById("id_signup_error_message").style.display = "block";
+    document.getElementById("id_signup_error_message").textContent = msg;
+}
 function pwMismatch() {
 
     let pw = document.getElementById("id_signup_password_input").value;
@@ -9,27 +13,32 @@ function pwMismatch() {
 
     // If password not entered
     if (pw == '')
-        alert ("Please enter Password");
+        showPasswordAlert("Please enter Password");
 
     // If confirm password not entered
     else if (pw2 == '')
-        alert ("Please enter confirm password");
+        showPasswordAlert ("Please enter confirm password");
 
     // If Not same return False.
     else if (pw != pw2) {
-        alert ("\nPassword did not match: Please try again...")
+        showPasswordAlert ("Password did not match: Please try again...")
+        return false;
+    }
+
+    else if(pw.length < 6) {
+        showPasswordAlert ("Password is too short, at least 6 characters.")
         return false;
     }
 
     // If same return True.
     else{
-        alert("Password Match: Welcome to GeeksforGeeks!")
         return true;
     }
 
 }
 
-document.getElementById("id_signup_password_2_input").onchange = pwMismatchRealtime;
+document.getElementById('id_signup_password_2_input').onchange = pwMismatchRealtime;
+document.getElementById('id_signup_password_input').onchange = pwMismatchRealtime;
 
 function pwMismatchRealtime(e) {
     var pw2 = e.target.value;
@@ -39,6 +48,11 @@ function pwMismatchRealtime(e) {
         document.getElementById("id_signup_error_message").textContent = "passwords don't match"
 
     }
+   else if(pw.length < 6) {
+        document.getElementById("id_signup_error_message").style.display = "block";
+        document.getElementById("id_signup_error_message").textContent = "Password is too short, at least 6 characters.";
+    }
+
     else {
         document.getElementById("id_signup_error_message").style.display = "none";
         document.getElementById("id_signup_error_message").textContent = "";
@@ -47,63 +61,74 @@ function pwMismatchRealtime(e) {
 
 (function() { // avoid variables ending up in the global scope
 
+
     document.getElementById("id_login_button").addEventListener('click', (e) => {
-        var form = e.target.closest("form");
-        if (form.checkValidity()) {
-            makeCall("POST", 'CheckLogin', e.target.closest("form"),
-                function(req) {
-                    if (req.readyState == XMLHttpRequest.DONE) {
-                        var message = req.responseText;
-                        switch (req.status) {
-                            case 200:
-                                sessionStorage.setItem('username', message);
-                                window.location.href = "./WebApp";
-                                break;
-                            case 400: // bad request
-                                document.getElementById("id_creation_alert").textContent = message;
-                                break;
-                            case 401: // unauthorized
-                                document.getElementById("id_creation_alert").textContent = message;
-                                break;
-                            case 500: // server error
-                                document.getElementById("id_creation_alert").textContent = message;
-                                break;
+
+            var form = e.target.closest("form");
+            if (form.checkValidity()) {
+                makeCall("POST", 'CheckLogin', e.target.closest("form"),
+                    function (req) {
+                        if (req.readyState == XMLHttpRequest.DONE) {
+                            var message = req.responseText;
+                            switch (req.status) {
+                                case 200:
+                                    sessionStorage.setItem('username', message);
+                                    window.location.href = "./WebApp";
+                                    break;
+                                case 400: // bad request
+                                    document.getElementById("id_error_message").textContent = message;
+                                    document.getElementById("id_error_message").style.display = "block";
+                                    break;
+                                case 401: // unauthorized
+                                    document.getElementById("id_error_message").textContent = message;
+                                    document.getElementById("id_error_message").style.display = "block";
+                                    break;
+                                case 500: // server error
+                                    document.getElementById("id_error_message").textContent = message;
+                                    document.getElementById("id_error_message").style.display = "block";
+                                    break;
+                            }
                         }
                     }
-                }
-            );
-        } else {
-            form.reportValidity();
-        }
+                );
+            } else {
+                form.reportValidity();
+            }
+
     });
 
     document.getElementById("id_signup_login_button").addEventListener('click', (e) => {
-        var form = e.target.closest("form");
-        if (form.checkValidity()) {
-            makeCall("POST", 'SignUp', e.target.closest("form"),
-                function(req) {
-                    if (req.readyState == XMLHttpRequest.DONE) {
-                        var message = req.responseText;
-                        switch (req.status) {
-                            case 200:
-                                sessionStorage.setItem('username', message);
-                                window.location.href = "./WebApp";
-                                break;
-                            case 400: // bad request
-                                document.getElementById("id_creation_alert").textContent = message;
-                                break;
-                            case 401: // unauthorized
-                                document.getElementById("id_creation_alert").textContent = message;
-                                break;
-                            case 500: // server error
-                                document.getElementById("id_creation_alert").textContent = message;
-                                break;
+        if(pwMismatch()) {
+            var form = e.target.closest("form");
+            if (form.checkValidity()) {
+                makeCall("POST", 'SignUp', e.target.closest("form"),
+                    function (req) {
+                        if (req.readyState == XMLHttpRequest.DONE) {
+                            var message = req.responseText;
+                            switch (req.status) {
+                                case 200:
+                                    sessionStorage.setItem('username', message);
+                                    window.location.href = "./WebApp";
+                                    break;
+                                case 400: // bad request
+                                    document.getElementById("id_signup_error_message").textContent = message;
+                                    document.getElementById("id_signup_error_message").style.display = "block";
+                                    break;
+                                case 401: // unauthorized
+                                    document.getElementById("id_signup_error_message").textContent = message;
+                                    document.getElementById("id_signup_error_message").style.display = "block";
+                                    break;
+                                case 500: // server error
+                                    document.getElementById("id_signup_error_message").textContent = req.responseText;
+                                    document.getElementById("id_signup_error_message").style.display = "block";
+                                    break;
+                            }
                         }
                     }
-                }
-            );
-        } else {
-            form.reportValidity();
+                );
+            } else {
+                form.reportValidity();
+            }
         }
     })
 })();

@@ -58,7 +58,15 @@ public class CheckLogin extends HttpServlet {
 
         try {
             user = usersDAO.checkCredentials(email, password);
-            new TempMeetingDAO(connection).cleanAllTempMeetingsByUserID(user.getId());
+            if(user!=null) {
+                new TempMeetingDAO(connection).cleanAllTempMeetingsByUserID(user.getId());
+            }
+            if (user == null) {
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                response.getWriter().println("login failed. invalid email/password");
+                return;
+            }
+
         } catch (SQLException e) {
             //sql error
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);

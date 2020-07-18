@@ -29,6 +29,8 @@
                         <div class="alert alert-danger mx-auto" id="id_error_message" style="display: none">ERROR: *ERROR
                             TEXT*
                         </div>
+                    </div>
+                    <div class="form-group row">
                         <div class="col text-center">
                             <button type="button" class="btn btn-primary" id="id_login_button">Login</button>
                         </div>
@@ -38,10 +40,14 @@
     </div>
     <div class="row mx-auto mt-4" id="id_signup_section">
         <div class="col">
-            <form action="#" onsubmit="return pwMismatch()">
+            <form action="#" >
                 <div class="form-group row">
                     <label for="id_signup_email_input" class="col-form-label">Email:</label>
                     <input type="email" name="email" class="form-control" id="id_signup_email_input" placeholder="email@meeting.com" required autocomplete="off">
+                </div>
+                <div class="form-group row">
+                    <label for="id_signup_name_input" class="col-form-label">Name:</label>
+                    <input type="text" name="displayedName" class="form-control" id="id_signup_name_input" placeholder="Giulio Cesare" required autocomplete="off">
                 </div>
                 <div class="form-group row">
                     <label for="id_signup_password_input" class="col-form-label">Password:</label>
