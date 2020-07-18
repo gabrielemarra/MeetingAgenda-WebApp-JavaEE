@@ -21,6 +21,7 @@
                                 return;
                             }
                             self.update(users); // self visible by closure
+                            sessionStorage.setItem("availableUsers", req.responseText);
 
                         }
                     } else {
@@ -186,7 +187,7 @@
     }
 
     function updateLocalAttempts() {
-        makeCall("POST", '../GetAttempts',getMeetingInfoForm(),function (req) {
+        makeCall("POST", '../GetAttempts', getMeetingInfoForm(), function (req) {
             if (req.readyState == XMLHttpRequest.DONE) {
                 switch (req.status) {
                     case 200:
@@ -210,7 +211,7 @@
     function increaseInvitationAttempts() {
         let oldAttempts = getInvitationAttempts();
 
-        makeCall("POST", '../IncreaseAttempts',getMeetingInfoForm(),function (req) {
+        makeCall("POST", '../IncreaseAttempts', getMeetingInfoForm(), function (req) {
             if (req.readyState == XMLHttpRequest.DONE) {
                 switch (req.status) {
                     case 200:
@@ -236,37 +237,58 @@
 
         var form = document.getElementById("id_invitation_form");
         var userSelected = getCheckedUserIDFromForm();
-        if (userSelected.length == 0) {
+        if (userSelected.length <= 0) {
+            let titleAlert = document.getElementById("id_modal_alert");
+            titleAlert.textContent = "Please select at least one user";
+            titleAlert.style.display = "block";
+            //todo + reminder appena seleziona qualcuno l'errore scompare
             return;
-        } else if (userSelected.length > getMeetingInfo().maxParticipants - 1) {
+        } else if (userSelected.length > JSON.parse(sessionStorage.getItem("availableUsers")).length){
+            let titleAlert = document.getElementById("id_modal_alert");
+            titleAlert.textContent = "Local form error";
+            titleAlert.style.display = "block";
             return;
         }
-        //todo chiamare solo se il controllo locale è andato bene
-        if (form.checkValidity()) {
-            makeCall("POST", '../CheckInvitations', getInvitationDataForm(),
-                function (req) {
-                    if (req.readyState == XMLHttpRequest.DONE) {
-                        switch (req.status) {
-                            case 200:
-                                //todo
-                                //close modal and refresh tables
-                                break;
-                            case 400: // bad request
-                                // document.getElementById("errormessage").textContent = message;
-                                break;
-                            case 401: // unauthorized
-                                // document.getElementById("errormessage").textContent = message;
-                                break;
-                            case 500: // server error
-                                //document.getElementById("errormessage").textContent = message;
-                                break;
+        else if ("".length === 9999) {
+            //todo metodo marra per controllare se
+        }
+        else if (userSelected.length > getMeetingInfo().maxParticipants - 1) {
+            let titleAlert = document.getElementById("id_modal_alert");
+            let numberDesect = userSelected.length - getMeetingInfo().maxParticipants - 1;
+            titleAlert.textContent = "Too many user selected. Deselect at least " + numberDesect + ((numberDesect > 1 ) ? " users." : " user.");
+            titleAlert.style.display = "block";
+
+        }
+        else if (userSelected.length <= getMeetingInfo().maxParticipants - 1) {
+
+            if (form.checkValidity()) {
+                makeCall("POST", '../CheckInvitations', getInvitationDataForm(),
+                    function (req) {
+                        if (req.readyState == XMLHttpRequest.DONE) {
+                            switch (req.status) {
+                                case 200:
+                                    //todo
+                                    //close modal and refresh tables
+                                    break;
+                                case 400: // bad request
+                                    // document.getElementById("errormessage").textContent = message;
+                                    break;
+                                case 401: // unauthorized
+                                    // document.getElementById("errormessage").textContent = message;
+                                    break;
+                                case 500: // server error
+                                    //document.getElementById("errormessage").textContent = message;
+                                    break;
+                            }
                         }
                     }
-                }
-            );
-        } else {
-            form.reportValidity();
+                );
+            } else {
+                form.reportValidity();
+            }
+            return;
         }
+
     });
 
     function getInvitationDataForm() {
