@@ -21,7 +21,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 
 
 @WebServlet("/IncreaseAttempts")
@@ -77,7 +76,7 @@ public class IncreaseAttempts extends HttpServlet {
             return;
         }
         //maximum number of attempts reached
-        if (meetingCache.getAttempts() + 1 > 3) {
+        if (meetingCache.getAttempts() + 1 >= 3) {
             try {
                 cancelMeetingCreation(response, session, meetingCache);
                 response.setStatus(HttpServletResponse.SC_OK);

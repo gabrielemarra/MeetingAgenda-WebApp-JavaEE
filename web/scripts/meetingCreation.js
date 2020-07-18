@@ -90,6 +90,7 @@ function resetInviteError() {
                                 saveMeetingInfo(req.responseText);
                                 // setMeetingInfoIntoInvitationForm();
                                 resetInvitationAttempts();
+                                resetStatusMeetingForm();
                                 //open modal
                                 prepareAndShowModal();
                                 break;
@@ -132,10 +133,10 @@ function resetInviteError() {
 
     function realtimeValidateDuration(e) {
         var duration = e.target.value;
-        if (duration === "" || parseInt(duration) <= 0) {
+        if (duration === "" || parseInt(duration) < 5) {
             e.target.className = "form-control is-invalid"
             const titleAlert = document.getElementById("id_duration_alert");
-            titleAlert.textContent = "Invalid duration";
+            titleAlert.textContent = "Meeting duration is too short, at least 5 minutes";
             titleAlert.style.display = "block";
         } else {
             e.target.className = "form-control is-valid"
@@ -149,10 +150,10 @@ function resetInviteError() {
 
     function realtimeValidateParticipants(e) {
         var duration = e.target.value;
-        if (duration === "" || parseInt(duration) <= 0) {
+        if (duration === "" || parseInt(duration) < 2) {
             e.target.className = "form-control is-invalid"
             const titleAlert = document.getElementById("id_participants_alert");
-            titleAlert.textContent = "Invalid max participants";
+            titleAlert.textContent = "Invalid max participants, at least 2";
             titleAlert.style.display = "block";
         } else {
             e.target.className = "form-control is-valid"
@@ -160,6 +161,12 @@ function resetInviteError() {
             titleAlert.textContent = "";
             titleAlert.style.display = "none";
         }
+    }
+
+    function resetStatusMeetingForm() {
+        document.getElementById("title-input").className="form-control"
+        document.getElementById("duration-input").className="form-control"
+        document.getElementById("max-participants-input").className="form-control"
     }
 
     function openModal() {
@@ -193,15 +200,14 @@ function resetInviteError() {
     }
 
 
-
     function updateLocalAttempts() {
         makeCall("POST", '../GetAttempts', getMeetingInfoForm(), function (req) {
             if (req.readyState == XMLHttpRequest.DONE) {
                 switch (req.status) {
                     case 200:
-                        let attemptsFromServer = req.readyState;
+                        let attemptsFromServer = req.responseText;
                         sessionStorage.setItem("invitationAttempts", attemptsFromServer.toString());
-                        break;
+                        return parseInt(attemptsFromServer);
                     case 400: // bad request
                         // document.getElementById("errormessage").textContent = message;
                         break;
@@ -219,13 +225,13 @@ function resetInviteError() {
     function increaseInvitationAttempts() {
         let oldAttempts = getInvitationAttempts();
 
+        oldAttempts++;
+
+        sessionStorage.setItem("invitationAttempts", oldAttempts.toString());
+
         makeCall("POST", '../IncreaseAttempts', getMeetingInfoForm(), function (req) {
             if (req.readyState == XMLHttpRequest.DONE) {
                 switch (req.status) {
-                    case 200:
-                        let attemptsFromServer = req.readyState;
-                        sessionStorage.setItem("invitationAttempts", attemptsFromServer.toString());
-                        break;
                     case 400: // bad request
                         // document.getElementById("errormessage").textContent = message;
                         break;
@@ -241,8 +247,6 @@ function resetInviteError() {
     }
 
     document.getElementById("id_modal_submit_button").addEventListener('click', (e) => {
-        var test = getInvitationAttempts();
-
         var form = document.getElementById("id_invitation_form");
         var userSelected = getCheckedUserIDFromForm();
         if (userSelected.length <= 0) {
@@ -251,26 +255,22 @@ function resetInviteError() {
             titleAlert.style.display = "block";
             //todo + reminder appena seleziona qualcuno l'errore scompare
             return;
-        } else if (userSelected.length > getAvailableUsers()){
+        } else if (userSelected.length > getAvailableUsers()) {
             let titleAlert = document.getElementById("id_modal_alert");
             titleAlert.textContent = "Local form error";
             titleAlert.style.display = "block";
             //homepage con errore del text content
             return;
-        }
-        else if ("".length === 9999) {
+        } else if ("".length === 9999) {
             //todo metodo marra per controllare se
-        }
-        else if (userSelected.length > getMeetingInfo().maxParticipants - 1) {
+        } else if (userSelected.length > getMeetingInfo().maxParticipants - 1) {
             increaseInvitationAttempts();
             let titleAlert = document.getElementById("id_modal_alert");
             let numberDesect = userSelected.length - (getMeetingInfo().maxParticipants - 1);
-            titleAlert.textContent = "Too many user selected. Deselect at least " + numberDesect + ((numberDesect > 1 ) ? " users." : " user.");
+            titleAlert.textContent = "Too many user selected. Deselect at least " + numberDesect + ((numberDesect > 1) ? " users." : " user.");
             titleAlert.style.display = "block";
 
-        }
-        else if (userSelected.length <= getMeetingInfo().maxParticipants - 1) {
-
+        } else {
             if (form.checkValidity()) {
                 makeCall("POST", '../CheckInvitations', getInvitationDataForm(),
                     function (req) {
@@ -300,6 +300,11 @@ function resetInviteError() {
             return;
         }
 
+        if (getInvitationAttempts()>=3){
+            closeModalAndRefreshTables();
+            alert("EROR");
+            //todo show error
+        }
     });
 
     function getInvitationDataForm() {
@@ -378,6 +383,7 @@ function resetInviteError() {
 
     function closeModalAndRefreshTables() {
         closeModal();
+        cleanModalBody();
 
         let invitedList = new InvitedAtList(
             document.getElementById("id_alert"),
@@ -391,10 +397,13 @@ function resetInviteError() {
         createdMeetingsList.show();
     }
 
+    function cleanModalBody() {
+        document.getElementById("id_invitation_list").innerHTML="";
+    }
+    
     function getAvailableUsers() {
         return JSON.parse(sessionStorage.getItem("availableUsers"));
     }
-
 
 
 })();
