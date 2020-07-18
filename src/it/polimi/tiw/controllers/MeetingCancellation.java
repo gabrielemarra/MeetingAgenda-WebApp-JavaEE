@@ -1,10 +1,6 @@
 package it.polimi.tiw.controllers;
 
 import it.polimi.tiw.beans.User;
-import org.thymeleaf.TemplateEngine;
-import org.thymeleaf.context.WebContext;
-import org.thymeleaf.templatemode.TemplateMode;
-import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -23,17 +19,10 @@ import java.sql.SQLException;
 public class MeetingCancellation extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private Connection connection;
-    private TemplateEngine templateEngine;
+
 
 
     public void init() throws ServletException{
-        //Thymeleaf setup
-        ServletContext servletContext = getServletContext();
-        ServletContextTemplateResolver templateResolver = new ServletContextTemplateResolver(servletContext);
-        templateResolver.setTemplateMode(TemplateMode.HTML);
-        this.templateEngine = new TemplateEngine();
-        this.templateEngine.setTemplateResolver(templateResolver);
-        templateResolver.setSuffix(".html");
         try {
             ServletContext context = getServletContext();
             String driver = context.getInitParameter("dbDriver");
@@ -57,12 +46,6 @@ public class MeetingCancellation extends HttpServlet {
 
         String path = "/WEB-INF/MeetingCancellation.html";
         ServletContext servletContext = getServletContext();
-        final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
-        ctx.setVariable("currentUserEmail", user.getEmail());
-        ctx.setVariable("currentUserDislayedName", user);
-
-
-        templateEngine.process(path, ctx, response.getWriter());
     }
 
     @Override
