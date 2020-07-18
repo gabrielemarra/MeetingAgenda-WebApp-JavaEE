@@ -1,10 +1,11 @@
 package it.polimi.tiw.controllers;
 
-import java.io.IOException;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.sql.Connection;
-import javax.servlet.ServletContext;
+import it.polimi.tiw.auxiliary.ConnectionManager;
+import it.polimi.tiw.beans.User;
+import it.polimi.tiw.dao.TempMeetingDAO;
+import it.polimi.tiw.dao.UsersDAO;
+import org.apache.commons.text.StringEscapeUtils;
+
 import javax.servlet.ServletException;
 import javax.servlet.UnavailableException;
 import javax.servlet.annotation.MultipartConfig;
@@ -12,11 +13,9 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import it.polimi.tiw.beans.User;
-import it.polimi.tiw.dao.TempMeetingDAO;
-import it.polimi.tiw.dao.UsersDAO;
-import org.apache.commons.text.StringEscapeUtils;
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.SQLException;
 
 @WebServlet("/CheckLogin")
 @MultipartConfig
@@ -30,14 +29,7 @@ public class CheckLogin extends HttpServlet {
 
     public void init() throws ServletException {
         try {
-            ServletContext context = getServletContext();
-            String driver = context.getInitParameter("dbDriver");
-            String url = context.getInitParameter("dbUrl");
-            String user = context.getInitParameter("dbUser");
-            String password = context.getInitParameter("dbPassword");
-            Class.forName(driver);
-            connection = DriverManager.getConnection(url, user, password);
-
+            connection = ConnectionManager.tryConnection(getServletContext());
         } catch (ClassNotFoundException e) {
             throw new UnavailableException("Can't load database driver");
         } catch (SQLException e) {
