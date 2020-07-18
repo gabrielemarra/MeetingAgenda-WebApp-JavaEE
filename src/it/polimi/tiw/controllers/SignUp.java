@@ -6,6 +6,7 @@ import it.polimi.tiw.dao.UsersDAO;
 
 import javax.servlet.ServletException;
 import javax.servlet.UnavailableException;
+import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -19,6 +20,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @WebServlet("/SignUp")
+@MultipartConfig
 public class SignUp extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private Connection connection = null;
@@ -40,17 +42,6 @@ public class SignUp extends HttpServlet {
         }
     }
 
-    private void sendTextResponse (String res, HttpServletResponse response) {
-        response.setContentType("text/plain");
-        PrintWriter out = null;
-        try {
-            out = response.getWriter();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        out.println(res);
-        out.close();
-    }
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
@@ -58,7 +49,9 @@ public class SignUp extends HttpServlet {
         pwMain = request.getParameter("password1");
         pwConfirm = request.getParameter("password2");
         if(!pwMain.equalsIgnoreCase(pwConfirm)) {
-            sendTextResponse("password mismatch", response);
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.getWriter().println("passwords don't match");
+            return;
         } else {
 
             String email = request.getParameter("email");
@@ -70,9 +63,22 @@ public class SignUp extends HttpServlet {
                 newBorn.setPassword(pwMain);
                 try {
                     usersDAO.addNewUser(newBorn);
+                    request.getSession().setAttribute("user", newBorn);
+                    response.setStatus(HttpServletResponse.SC_OK);
+                    response.setContentType("application/json");
+                    response.setCharacterEncoding("UTF-8");
+                    response.getWriter().println(email);
                 } catch (SQLException e) {
-                    e.printStackTrace();
+                    //sql error
+                    response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                    response.getWriter().println("internal server error");
+                    return;
                 }
+            }
+            else {
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                response.getWriter().println("please insert a valid email address");
+                return;
             }
         }
 
