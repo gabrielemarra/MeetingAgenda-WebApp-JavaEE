@@ -165,7 +165,7 @@ function resetInviteError() {
         // title.value = title.defaultValue;
         titleAlert.textContent = "";
         titleAlert.style.display = "none";
-        title.className="form-control";
+        title.className = "form-control";
     }
 
     function titleIsInvalid(title) {
@@ -194,7 +194,7 @@ function resetInviteError() {
         // duration.value = duration.defaultValue;
         durationAlert.textContent = "";
         durationAlert.style.display = "none";
-        duration.className="form-control";
+        duration.className = "form-control";
     }
 
     function durationIsInvalid(duration) {
@@ -223,7 +223,7 @@ function resetInviteError() {
         // maxParticipants.value = maxParticipants.defaultValue;
         maxParticipantsAlert.textContent = "";
         maxParticipantsAlert.style.display = "none";
-        maxParticipants.className="form-control";
+        maxParticipants.className = "form-control";
     }
 
     function maxParticipantsAreInvalid(maxParticipants) {
@@ -271,7 +271,7 @@ function resetInviteError() {
         // date.value = date.defaultValue;
         dateAlert.textContent = "";
         dateAlert.style.display = "none";
-        date.className="form-control";
+        date.className = "form-control";
     }
 
     function dateIsInvalid(dateRead, dateNow) {
@@ -307,7 +307,7 @@ function resetInviteError() {
         // time.value = time.defaultValue;
         timeAlert.textContent = "";
         timeAlert.style.display = "none";
-        time.className="form-control";
+        time.className = "form-control";
     }
 
     function timeIsInvalid(dateRead, dateNow, timeRead, timeNow) {
@@ -322,16 +322,16 @@ function resetInviteError() {
     function resetCreatingInfoForm() {
         let duration = document.getElementById("duration-input");
         duration.value = duration.defaultValue;
-        duration.className="form-control";
+        duration.className = "form-control";
         let maxParticipants = document.getElementById("max-participants-input");
         maxParticipants.value = maxParticipants.defaultValue;
-        maxParticipants.className="form-control";
+        maxParticipants.className = "form-control";
         let dateRead = document.getElementById("date-input");
         dateRead.value = dateRead.defaultValue;
-        dateRead.className="form-control";
+        dateRead.className = "form-control";
         let timeRead = document.getElementById("time-input");
         timeRead.value = timeRead.defaultValue;
-        timeRead.className="form-control";
+        timeRead.className = "form-control";
 
         resetTitleStatus();
         resetDurationStatus();
@@ -360,6 +360,10 @@ function resetInviteError() {
     function getMeetingInfo() {
         const jsonString = sessionStorage.getItem("meetingInfo");
         return JSON.parse(jsonString);
+    }
+
+    function resetMeetingInfo() {
+        sessionStorage.removeItem("meetingInfo");
     }
 
     function resetInvitationAttempts() {
@@ -476,6 +480,26 @@ function resetInviteError() {
             alert("EROR");
             //todo show error
         }
+    });
+
+    document.getElementById("id_modal_cancel_button").addEventListener('click', (e) => {
+        makeCall("POST", '../DeleteTemporaryMeeting', getMeetingInfoForm(), function (req) {
+            if (req.readyState == XMLHttpRequest.DONE) {
+                switch (req.status) {
+                    case 200:
+                        resetMeetingInfo();
+                    case 400: // bad request
+                        // document.getElementById("errormessage").textContent = message;
+                        break;
+                    case 401: // unauthorized
+                        // document.getElementById("errormessage").textContent = message;
+                        break;
+                    case 500: // server error
+                        //document.getElementById("errormessage").textContent = message;
+                        break;
+                }
+            }
+        });
     });
 
     function getInvitationDataForm() {
