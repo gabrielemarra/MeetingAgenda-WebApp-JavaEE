@@ -61,7 +61,7 @@
                     checkBox.setAttribute("name", user.id);
                     checkBox.setAttribute("value", user.id);
 
-                    if (alreadySelectedUsers && alreadySelectedUsers===user.id) {
+                    if (alreadySelectedUsers && alreadySelectedUsers === user.id) {
                         //todo check
                         checkBox.setAttribute("checked", "checked");
                     }
@@ -84,6 +84,8 @@
                         var message = req.responseText;
                         switch (req.status) {
                             case 200:
+                                saveMeetingInfo(req.responseText);
+                                getMeetingInfo();
                                 //open modal
                                 openModal();
                                 invitationList = new InvitationList(
@@ -160,5 +162,16 @@
             titleAlert.style.display = "none";
         }
     }
+
+    function saveMeetingInfo(jsonMeetingInfo) {
+        sessionStorage.setItem("meetingInfo", jsonMeetingInfo);
+    }
+    
+    function getMeetingInfo() {
+        const jsonString = sessionStorage.getItem("meetingInfo");
+        return JSON.parse(jsonString);
+    }
+
+
 
 })();
