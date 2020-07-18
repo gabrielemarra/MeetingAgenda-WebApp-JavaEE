@@ -115,15 +115,23 @@ function resetInviteError() {
     });
 
     function setGenericCreationAlert() {
+        const formGenericAlert = document.getElementById("id_creation_alert");
         if (!checkAllMeetingInfo()) {
-            const titleAlert = document.getElementById("id_creation_alert");
-            titleAlert.textContent = "Please verify all the information.";
-            titleAlert.style.display = "block";
+            formGenericAlert.className="alert alert-danger";
+            formGenericAlert.textContent = "Please verify all the information.";
+            formGenericAlert.style.display = "block";
         } else {
-            const titleAlert = document.getElementById("id_creation_alert");
-            titleAlert.textContent = "";
-            titleAlert.style.display = "none";
+            formGenericAlert.className="alert alert-danger";
+            formGenericAlert.textContent = "";
+            formGenericAlert.style.display = "none";
         }
+    }
+
+    function setCreationSuccessAlert() {
+        const formGenericAlert = document.getElementById("id_creation_alert");
+        formGenericAlert.className="alert alert-success";
+        formGenericAlert.textContent = "The meeting has been created successfully!";
+        formGenericAlert.style.display = "block";
     }
 
     function checkAllMeetingInfo() {
@@ -453,8 +461,7 @@ function resetInviteError() {
                         if (req.readyState == XMLHttpRequest.DONE) {
                             switch (req.status) {
                                 case 200:
-                                    //todo
-                                    alert(req.responseText);
+                                    setCreationSuccessAlert();
                                     closeModalAndRefreshTables();
                                     break;
                                 case 400: // bad request
