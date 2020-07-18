@@ -147,7 +147,7 @@ function resetInviteError() {
     function realtimeValidateTitle(e) {
         var title = e.target.value;
         if (titleIsInvalid(title)) {
-            e.target.className = "form-control is-invalid"
+            e.target.className = "form-control is-invalid";
             const titleAlert = document.getElementById("id_title_alert");
             titleAlert.textContent = "Invalid title";
             titleAlert.style.display = "block";
@@ -178,7 +178,7 @@ function resetInviteError() {
         let duration = e.target.value;
         const durationAlert = document.getElementById("id_duration_alert");
         if (durationIsInvalid(duration)) {
-            e.target.className = "form-control is-invalid"
+            e.target.className = "form-control is-invalid";
             durationAlert.textContent = "Meeting duration is too short, at least 5 minutes";
             durationAlert.style.display = "block";
         } else {
@@ -207,7 +207,7 @@ function resetInviteError() {
         let maxParticipants = e.target.value;
         const maxParticipantsAlert = document.getElementById("id_participants_alert");
         if (maxParticipantsAreInvalid(maxParticipants)) {
-            e.target.className = "form-control is-invalid"
+            e.target.className = "form-control is-invalid";
             maxParticipantsAlert.textContent = "Invalid max participants, at least 2";
             maxParticipantsAlert.style.display = "block";
         } else {
@@ -259,7 +259,7 @@ function resetInviteError() {
             }
 
         } else {
-            e.target.className = "form-control is-valid"
+            e.target.className = "form-control is-valid";
             dateAlert.textContent = "";
             dateAlert.style.display = "none";
         }
@@ -291,7 +291,7 @@ function resetInviteError() {
 
         const timeAlert = document.getElementById("id_time_alert");
         if (timeIsInvalid(dateRead, dateNow, timeRead, timeNow)) {
-            e.target.className = "form-control is-invalid"
+            e.target.className = "form-control is-invalid";
             timeAlert.textContent = "Invalid time, please select a future time";
             timeAlert.style.display = "block";
         } else {
@@ -351,6 +351,7 @@ function resetInviteError() {
             document.getElementById("id_invitation_list"));
         invitationList.reset();
         invitationList.show();
+        document.getElementById("id_modal_alert").style.display = "none";
     }
 
     function saveMeetingInfo(jsonMeetingInfo) {
@@ -477,8 +478,7 @@ function resetInviteError() {
 
         if (getInvitationAttempts() >= 3) {
             closeModalAndRefreshTables();
-            alert("EROR");
-            //todo show error
+            openCancellationModal();
         }
     });
 
@@ -601,5 +601,8 @@ function resetInviteError() {
         return JSON.parse(sessionStorage.getItem("availableUsers"));
     }
 
+    function openCancellationModal() {
+        $("#cancellationModal").modal("show");
+    }
 
 })();
