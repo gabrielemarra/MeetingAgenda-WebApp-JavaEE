@@ -41,17 +41,17 @@
             <form action="#" onsubmit="return pwMismatch()">
                 <div class="form-group row">
                     <label for="id_signup_email_input" class="col-form-label">Email:</label>
-                    <input type="email" name="email" class="form-control" id="id_signup_email_input" placeholder="email@meeting.com" required>
+                    <input type="email" name="email" class="form-control" id="id_signup_email_input" placeholder="email@meeting.com" required autocomplete="off">
                 </div>
                 <div class="form-group row">
                     <label for="id_signup_password_input" class="col-form-label">Password:</label>
                     <input type="password" name="password1" class="form-control" id="id_signup_password_input" placeholder="password"
-                           required>
+                           required autocomplete="new-password">
                 </div>
                 <div class="form-group row">
                     <label for="id_signup_password_2_input" class="col-form-label">Confirm Password:</label>
                     <input type="password" name="password2" class="form-control" id="id_signup_password_2_input" placeholder="password"
-                           required>
+                           required autocomplete="new-password">
                 </div>
 
                 <div class="form-group row">
