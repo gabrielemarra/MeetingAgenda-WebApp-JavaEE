@@ -444,7 +444,8 @@ function resetInviteError() {
                         break;
                 }
             }
-        );
+        });
+
     }
 
     document.getElementById("id_modal_submit_button").addEventListener('click', (e) => {
