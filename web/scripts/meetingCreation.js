@@ -5,6 +5,13 @@ function resetInviteError() {
 }
 
 (function () { // avoid variables ending up in the global scope
+
+    function backToWebApp(msg) {
+        alert(msg);
+        closeModalAndRefreshTables();
+        window.location.href = "../WebApp";
+    }
+
     function InvitationList(_alert, _listcontainer) {
 
         this.alert = _alert;
@@ -23,15 +30,26 @@ function resetInviteError() {
                         if (req.status == 200) {
                             var users = JSON.parse(req.responseText);
                             if (users.length == 0) {
-                                self.alert.textContent += "no user available";
+                                backToWebApp("error: no users available");
                                 return;
                             }
                             self.update(users); // self visible by closure
                             sessionStorage.setItem("availableUsers", req.responseText);
 
                         }
+                        switch (req.status) {
+                            case 400: // bad request
+                                backToWebApp("invalid request.");
+                                break;
+                            case 401: // unauthorized
+                                forceLocalLogout();
+                                break;
+                            case 500: // server error
+                                backToWebApp("internal server error.");
+                                break;
+                        }
                     } else {
-                        self.alert.textContent = message;
+                        backToWebApp("error in request");
                     }
                 }
             );
@@ -57,7 +75,6 @@ function resetInviteError() {
                     var label = row.querySelector("label");
                     label.textContent = user.displayedName;
                     label.setAttribute("for", user.id);
-
                     var checkBox = row.querySelector("input");
                     checkBox.setAttribute("field", user.id);
                     checkBox.setAttribute("name", user.id);
@@ -96,13 +113,13 @@ function resetInviteError() {
                                 prepareAndShowModal();
                                 break;
                             case 400: // bad request
-                                // document.getElementById("errormessage").textContent = message;
+                                backToWebApp("invalid request.");
                                 break;
                             case 401: // unauthorized
-                                // document.getElementById("errormessage").textContent = message;
+                                forceLocalLogout();
                                 break;
                             case 500: // server error
-                                //document.getElementById("errormessage").textContent = message;
+                                backToWebApp("internal server error.");
                                 break;
                         }
                     }
@@ -117,11 +134,11 @@ function resetInviteError() {
     function setGenericCreationAlert() {
         const formGenericAlert = document.getElementById("id_creation_alert");
         if (!checkAllMeetingInfo()) {
-            formGenericAlert.className="alert alert-danger";
+            formGenericAlert.className = "alert alert-danger";
             formGenericAlert.textContent = "Please verify all the information.";
             formGenericAlert.style.display = "block";
         } else {
-            formGenericAlert.className="alert alert-danger";
+            formGenericAlert.className = "alert alert-danger";
             formGenericAlert.textContent = "";
             formGenericAlert.style.display = "none";
         }
@@ -129,7 +146,7 @@ function resetInviteError() {
 
     function setCreationSuccessAlert() {
         const formGenericAlert = document.getElementById("id_creation_alert");
-        formGenericAlert.className="alert alert-success";
+        formGenericAlert.className = "alert alert-success";
         formGenericAlert.textContent = "The meeting has been created successfully!";
         formGenericAlert.style.display = "block";
     }
@@ -393,13 +410,13 @@ function resetInviteError() {
                         sessionStorage.setItem("invitationAttempts", attemptsFromServer.toString());
                         return parseInt(attemptsFromServer);
                     case 400: // bad request
-                        // document.getElementById("errormessage").textContent = message;
+                        backToWebApp("invalid request.");
                         break;
                     case 401: // unauthorized
-                        // document.getElementById("errormessage").textContent = message;
+                        forceLocalLogout();
                         break;
                     case 500: // server error
-                        //document.getElementById("errormessage").textContent = message;
+                        backToWebApp("internal server error.");
                         break;
                 }
             }
@@ -417,17 +434,17 @@ function resetInviteError() {
             if (req.readyState == XMLHttpRequest.DONE) {
                 switch (req.status) {
                     case 400: // bad request
-                        // document.getElementById("errormessage").textContent = message;
+                        backToWebApp("invalid request.");
                         break;
                     case 401: // unauthorized
-                        // document.getElementById("errormessage").textContent = message;
+                        forceLocalLogout();
                         break;
                     case 500: // server error
-                        //document.getElementById("errormessage").textContent = message;
+                        backToWebApp("internal server error.");
                         break;
                 }
             }
-        });
+        );
     }
 
     document.getElementById("id_modal_submit_button").addEventListener('click', (e) => {
@@ -497,13 +514,13 @@ function resetInviteError() {
                         resetMeetingInfo();
                         break;
                     case 400: // bad request
-                        // document.getElementById("errormessage").textContent = message;
+                        backToWebApp("invalid request.");
                         break;
                     case 401: // unauthorized
-                        // document.getElementById("errormessage").textContent = message;
+                        forceLocalLogout();
                         break;
                     case 500: // server error
-                        //document.getElementById("errormessage").textContent = message;
+                        backToWebApp("internal server error.");
                         break;
                 }
             }

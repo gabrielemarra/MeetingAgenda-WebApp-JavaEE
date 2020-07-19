@@ -3,7 +3,6 @@ window.addEventListener("load", () => {
     let createdMeetingsList;
     if (sessionStorage.getItem("username") == null) {
         window.location.href = "../index.html";
-        logOut();
     } else {
         invitedList = new InvitedAtList(
             document.getElementById("id_alert"),
