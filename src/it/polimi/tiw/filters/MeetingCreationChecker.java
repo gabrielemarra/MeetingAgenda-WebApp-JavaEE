@@ -20,11 +20,12 @@ public class MeetingCreationChecker implements Filter {
 
         HttpServletRequest req = (HttpServletRequest) request;
         HttpServletResponse res = (HttpServletResponse) response;
-        String homePagePath = req.getServletContext().getContextPath() + "/HomePage";
+
 
         if (request.getParameter("meetingTitle") == null || request.getParameter("meetingDateTime") == null) {
-            homePagePath += "?error=Invalid request to server";
-            res.sendRedirect(homePagePath);
+            ((HttpServletResponse) response).setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.getWriter().println("error: invalid request parameters");
+            return;
         }
 
         // pass the request along the filter chain
