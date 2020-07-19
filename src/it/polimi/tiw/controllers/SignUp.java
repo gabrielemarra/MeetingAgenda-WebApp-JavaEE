@@ -52,6 +52,11 @@ public class SignUp extends HttpServlet {
         pwMain = escapeJava(request.getParameter("password1"));
         pwConfirm = escapeJava(request.getParameter("password2"));
         String name = escapeJava(request.getParameter("displayedName"));
+        if (name == null || pwMain == null || pwConfirm == null) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.getWriter().println("null or invalid parameter");
+            return;
+        }
         if(!pwMain.equalsIgnoreCase(pwConfirm)) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             response.getWriter().println("passwords don't match");

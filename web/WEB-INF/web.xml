@@ -34,27 +34,25 @@
         <filter-name>MeetingCreationChecker</filter-name>
         <filter-class>it.polimi.tiw.filters.MeetingCreationChecker</filter-class>
     </filter>
-    <filter>
-        <filter-name>BlockAccess</filter-name>
-        <filter-class>it.polimi.tiw.filters.BlockAccess</filter-class>
-    </filter>
 
     <filter-mapping>
         <filter-name>AuthenticatedChecker</filter-name>
-        <url-pattern>/HomePage</url-pattern>
-        <url-pattern>/CheckMeetingParameters</url-pattern>
-        <url-pattern>/Invite</url-pattern>
+
         <url-pattern>/CheckInvitations</url-pattern>
+        <url-pattern>/CheckMeetingParameters</url-pattern>
+        <url-pattern>/DeleteTemporaryMeeting </url-pattern>
+        <url-pattern>/GetAttempts </url-pattern>
+        <url-pattern>/GetInvitationList </url-pattern>
+        <url-pattern>/GetMeetingsData </url-pattern>
+        <url-pattern>/GetUserData </url-pattern>
+        <url-pattern>/IncreaseAttempts </url-pattern>
+        <url-pattern>/MeetingCancellation </url-pattern>
+
     </filter-mapping>
 
     <filter-mapping>
         <filter-name>MeetingCreationChecker</filter-name>
         <url-pattern>/CheckInvitations</url-pattern>
-    </filter-mapping>
-
-    <filter-mapping>
-        <filter-name>BlockAccess</filter-name>
-        <url-pattern>/Invite</url-pattern>
     </filter-mapping>
 
     <welcome-file-list>

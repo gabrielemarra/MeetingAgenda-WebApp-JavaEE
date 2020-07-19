@@ -3,6 +3,7 @@ window.addEventListener("load", () => {
     let createdMeetingsList;
     if (sessionStorage.getItem("username") == null) {
         window.location.href = "../index.html";
+        logOut();
     } else {
         invitedList = new InvitedAtList(
             document.getElementById("id_alert"),
@@ -121,6 +122,17 @@ function CreatedList(_alert, _listcontainer) {
                         self.update(invitedAtMeetings); // self visible by closure
 
                     }
+                    switch (req.status) {
+                        case 400: // bad request
+                            logOut();
+                            break;
+                        case 401: // unauthorized
+                            forceLocalLogout();
+                            break;
+                        case 500: // server error
+                            logOut();
+                            break;
+                    }
                 } else {
                     self.alert.textContent = message;
                 }
@@ -183,13 +195,13 @@ function logOut() {
                     window.location.href = "../index.html";
                     break;
                 case 400: // bad request
-                    // document.getElementById("errormessage").textContent = message;
+                    logOut();
                     break;
                 case 401: // unauthorized
-                    // document.getElementById("errormessage").textContent = message;
+                    forceLocalLogout();
                     break;
                 case 500: // server error
-                    //document.getElementById("errormessage").textContent = message;
+                    logOut();
                     break;
             }
         }
@@ -215,4 +227,31 @@ function getEndTimeFormatted(startTime, duration) {
     var h = startTime.hour;
     var m = startTime.minute;
     var s = startTime.second;
+}
+
+function logOut() {
+    makeCall("GET", '../Logout', null, function (req) {
+        if (req.readyState == XMLHttpRequest.DONE) {
+            switch (req.status) {
+                case 200:
+                    localStorage.removeItem("username");
+                    window.location.href = "../index.html?successMessage=You have successfully logged out!";
+                    break;
+                case 400: // bad request
+                    forceLocalLogout();
+                    break;
+                case 401: // unauthorized
+                    forceLocalLogout();
+                    break;
+                case 500: // server error
+                    forceLocalLogout();
+                    break;
+            }
+        }
+    });
+}
+
+function forceLocalLogout() {
+    localStorage.removeItem("username");
+    window.location.href = "../index.html?errorMessage=Please log in to continue";
 }

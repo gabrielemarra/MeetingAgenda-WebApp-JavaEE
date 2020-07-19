@@ -20,12 +20,11 @@ public class AuthenticatedChecker implements Filter {
 
         HttpServletRequest req = (HttpServletRequest) request;
         HttpServletResponse res = (HttpServletResponse) response;
-        String loginPath = req.getServletContext().getContextPath() + "/index.html";
 
         HttpSession session = req.getSession();
         if (session.isNew() || session.getAttribute("user") == null) {
-            System.out.println("Invalid session, redirect to index.html");
-            res.sendRedirect(loginPath);
+            ((HttpServletResponse) response).setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.getWriter().println("error: unauthorized user");
             return;
         }
         // pass the request along the filter chain
