@@ -33,8 +33,18 @@ function pwMismatch() {
     else {
         return true;
     }
-
 }
+
+
+function showLogin() {
+    document.getElementById("id_login_section").style.display="block";
+    document.getElementById("id_signup_section").style.display="none";
+}
+function showSignUp() {
+    document.getElementById("id_signup_section").style.display="block";
+    document.getElementById("id_login_section").style.display="none";
+}
+
 
 const urlParams = new URLSearchParams(window.location.search);
 if (urlParams.has('errorMessage')) {
@@ -42,7 +52,7 @@ if (urlParams.has('errorMessage')) {
     let errorAlert = document.getElementById("id_main_error_message");
     errorAlert.textContent = errorParams;
     errorAlert.style.display="block";
-    
+
     document.getElementById("id_main_success_message").style.display="none";
 } else if (urlParams.has('successMessage')) {
     const successParams = urlParams.get('successMessage');

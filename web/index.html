@@ -13,74 +13,97 @@
 <body>
 <div class="container mx-auto my-5" style="max-width: 600px">
     <h1>Online Meeting Agenda</h1>
-    <div class="alert alert-danger mx-auto my-2" id="id_main_error_message" style="display: none">ERROR:</div>
-    <div class="alert alert-success mx-auto my-2" id="id_main_success_message" style="display: none">SUCCESS!</div>
+    <div class="alert alert-danger mx-auto my-2 text-center" id="id_main_error_message" style="display: none">ERROR:
+    </div>
+    <div class="alert alert-success mx-auto my-2 text-center" id="id_main_success_message" style="display: none">
+        SUCCESS!
+    </div>
 
-    <div class="row mx-auto mt-4" id="id_login_session">
+    <div class="row mx-auto mt-4" id="id_login_section" style="display: block">
         <div class="col">
+            <h4 class="text-center">Login</h4>
             <form action="#">
-                    <div class="form-group row">
-                        <label for="id_email_input" class="col-form-label">Email:</label>
-                        <input type="email" name="email" class="form-control" id="id_email_input" placeholder="email@meeting.com" required>
+                <div class="form-group row">
+                    <label for="id_email_input" class="col-form-label">Email:</label>
+                    <input type="email" name="email" class="form-control" id="id_email_input"
+                           placeholder="email@meeting.com" required>
+                </div>
+                <div class="form-group row">
+                    <label for="id_password_input" class="col-form-label">Password:</label>
+                    <input type="password" name="password" class="form-control" id="id_password_input"
+                           placeholder="password"
+                           required>
+                </div>
+                <div class="form-group row">
+                    <div class="alert alert-danger mx-auto" id="id_error_message" style="display: none">ERROR: *ERROR
+                        TEXT*
                     </div>
-                    <div class="form-group row">
-                        <label for="id_password_input" class="col-form-label">Password:</label>
-                        <input type="password" name="password" class="form-control" id="id_password_input" placeholder="password"
-                               required>
+                </div>
+                <div class="form-group row">
+                    <div class="col text-center">
+                        <button type="button" class="btn btn-primary" id="id_login_button">Login</button>
                     </div>
-                    <div class="form-group row">
-                        <div class="alert alert-danger mx-auto" id="id_error_message" style="display: none">ERROR: *ERROR
-                            TEXT*
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <div class="col text-center">
-                            <button type="button" class="btn btn-primary" id="id_login_button">Login</button>
-                        </div>
-                    </div>
+                </div>
             </form>
+            <div class="row mx-auto my-3">
+                <div class="col text-center">
+                    <button type="button" class="btn btn-link" id="id_switch_to_signup_button"
+                            onclick="showSignUp()">Sign Up
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
-    <div class="row mx-auto mt-4" id="id_signup_section">
+    <div class="row mx-auto mt-4" id="id_signup_section" style="display: none">
         <div class="col">
-            <form action="#" >
+            <h4 class="text-center">Sign Up</h4>
+            <form action="#">
                 <div class="form-group row">
                     <label for="id_signup_email_input" class="col-form-label">Email:</label>
-                    <input type="email" name="email" class="form-control" id="id_signup_email_input" placeholder="email@meeting.com" required autocomplete="off">
+                    <input type="email" name="email" class="form-control" id="id_signup_email_input"
+                           placeholder="email@meeting.com" required autocomplete="off">
                 </div>
                 <div class="form-group row">
                     <label for="id_signup_name_input" class="col-form-label">Name:</label>
-                    <input type="text" name="displayedName" class="form-control" id="id_signup_name_input" placeholder="Giulio Cesare" required autocomplete="off">
+                    <input type="text" name="displayedName" class="form-control" id="id_signup_name_input"
+                           placeholder="Giulio Cesare" required autocomplete="off">
                 </div>
                 <div class="form-group row">
                     <label for="id_signup_password_input" class="col-form-label">Password:</label>
-                    <input type="password" name="password1" class="form-control" id="id_signup_password_input" placeholder="password"
+                    <input type="password" name="password1" class="form-control" id="id_signup_password_input"
+                           placeholder="password"
                            required autocomplete="new-password">
                 </div>
                 <div class="form-group row">
                     <label for="id_signup_password_2_input" class="col-form-label">Confirm Password:</label>
-                    <input type="password" name="password2" class="form-control" id="id_signup_password_2_input" placeholder="password"
+                    <input type="password" name="password2" class="form-control" id="id_signup_password_2_input"
+                           placeholder="password"
                            required autocomplete="new-password">
                 </div>
 
                 <div class="form-group row">
-                    <div class="alert alert-danger mx-auto" id="id_signup_error_message" style="display: none">ERROR: *ERROR
+                    <div class="alert alert-danger mx-auto" id="id_signup_error_message" style="display: none">ERROR:
+                        *ERROR
                         TEXT*
                     </div>
                 </div>
 
                 <div class="form-group row">
-
                     <div class="col text-center">
                         <button type="button" class="btn btn-primary" id="id_signup_login_button">Sign Up</button>
                     </div>
                 </div>
-
-
             </form>
+            <div class="row mx-auto my-3">
+                <div class="col text-center">
+                    <button type="button" class="btn btn-link" id="id_switch_to_login_button" onclick="showLogin()">
+                        Login
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
-    <div class="row my-1">
+    <div class="row">
         <div class="col text-center">
             <a href="./ConnectionTester"> Test connection to DB</a>
         </div>
