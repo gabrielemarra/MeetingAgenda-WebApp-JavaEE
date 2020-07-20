@@ -61,8 +61,6 @@ function InvitedAtList(_alert, _listcontainer) {
                             forceLocalLogoutMessage("internal server error, please try again later");
                             break;
                     }
-                } else {
-                    self.alert.textContent = message;
                 }
             }
         );
@@ -150,8 +148,6 @@ function CreatedList(_alert, _listcontainer) {
                             forceLocalLogoutMessage("internal server error");
                             break;
                     }
-                } else {
-                    self.alert.textContent = message;
                 }
             }
         );
