@@ -66,10 +66,10 @@ DROP TABLE IF EXISTS `temp_meetings`;
 CREATE TABLE `temp_meetings` (
   `title` varchar(256) NOT NULL,
   `date_time` datetime NOT NULL,
-  `duration` int DEFAULT NULL,
-  `max_participants` int DEFAULT NULL,
+  `duration` int NOT NULL,
+  `max_participants` int NOT NULL,
   `id_creator` int NOT NULL,
-  `attempts` int DEFAULT NULL,
+  `attempts` int NOT NULL,
   PRIMARY KEY (`title`,`id_creator`,`date_time`),
   KEY `creator_idx` (`id_creator`),
   KEY `creator_idxi` (`id_creator`),
@@ -104,4 +104,4 @@ CREATE TABLE `users` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-07-20 17:01:46
+-- Dump completed on 2020-07-20 17:07:16
