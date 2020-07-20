@@ -52,7 +52,7 @@ public class CheckInvitations extends HttpServlet {
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        response.sendRedirect(getServletContext().getContextPath() + "/HomePage?error=Invalid request to the server");
+        response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
     }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -76,7 +76,7 @@ public class CheckInvitations extends HttpServlet {
             TempMeeting meetingCache = tMDao.getTempMeeting(formMeetingTitle, formMeetingDateTime, user.getId()); //local and cache parameters are both equal
             //no remaining attempts left
             if (meetingCache==null){
-                response.sendRedirect(getServletContext().getContextPath()+"/HomePage?error='Invalid request. Try again'");
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                 return;
             }
             if (meetingCache.getAttempts() + 1 > 3) {

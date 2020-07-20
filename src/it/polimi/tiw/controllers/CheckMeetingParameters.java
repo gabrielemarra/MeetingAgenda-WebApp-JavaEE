@@ -16,6 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.security.InvalidParameterException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.time.LocalDate;
@@ -45,8 +46,7 @@ public class CheckMeetingParameters extends HttpServlet {
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        //todo
-        response.sendRedirect(getServletContext().getContextPath() + "/HomePage?error=Invalid request to the server");
+        response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
     }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -81,21 +81,27 @@ public class CheckMeetingParameters extends HttpServlet {
             return;
         }
 
-        //if meeting fetch has been successful
-        TempMeeting.checkInsertedMeeting(tempMeeting);
-        TempMeetingDAO tempMeetingDAO = new TempMeetingDAO(connection);
         try {
-            tempMeetingDAO.addTempMeetingToDatabase(tempMeeting);
+            //if meeting fetch has been successful
+            TempMeeting.checkInsertedMeeting(tempMeeting);
 
-            Gson gson = new Gson();
-            String json = gson.toJson(tempMeeting);
-            response.setContentType("application/json");
-            response.setCharacterEncoding("UTF-8");
-            response.getWriter().write(json);
-        } catch (SQLException e) {
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            response.getWriter().println("internal server error: " + e.getMessage());
+            TempMeetingDAO tempMeetingDAO = new TempMeetingDAO(connection);
+            try {
+                tempMeetingDAO.addTempMeetingToDatabase(tempMeeting);
+
+                Gson gson = new Gson();
+                String json = gson.toJson(tempMeeting);
+                response.setContentType("application/json");
+                response.setCharacterEncoding("UTF-8");
+                response.getWriter().write(json);
+            } catch (SQLException e) {
+                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                response.getWriter().println("Internal server error");
+            }
+        } catch (InvalidParameterException e){
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
         }
+
     }
 
     private LocalDate getDateFromRequestParameter(String param) {
