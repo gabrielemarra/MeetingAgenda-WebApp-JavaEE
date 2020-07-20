@@ -48,8 +48,6 @@ function resetInviteError() {
                                 backToWebApp("internal server error.");
                                 break;
                         }
-                    } else {
-                       backToWebApp("request error");
                     }
                 }
             );

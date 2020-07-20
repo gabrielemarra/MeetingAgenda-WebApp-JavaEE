@@ -46,8 +46,6 @@
         <url-pattern>/GetMeetingsData </url-pattern>
         <url-pattern>/GetUserData </url-pattern>
         <url-pattern>/IncreaseAttempts </url-pattern>
-        <url-pattern>/MeetingCancellation </url-pattern>
-
     </filter-mapping>
 
     <filter-mapping>

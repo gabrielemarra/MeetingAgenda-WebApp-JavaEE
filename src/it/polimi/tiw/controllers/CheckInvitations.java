@@ -8,7 +8,6 @@ import it.polimi.tiw.dao.MeetingsDAO;
 import it.polimi.tiw.dao.TempMeetingDAO;
 import it.polimi.tiw.dao.UsersDAO;
 
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.UnavailableException;
 import javax.servlet.annotation.MultipartConfig;
@@ -109,7 +108,7 @@ public class CheckInvitations extends HttpServlet {
             new TempMeetingDAO(connection).setAttempts(meetingCache);
 
             if (meetingCache.getMaxParticipants() - 1 < selectedUsersList.size() && meetingCache.getAttempts() < 3) {
-                sendRequestAgain(response, request,  meetingCache, selectedUsersList);
+                cancelMeetingCreation(response, session, meetingCache);
             } else if (meetingCache.getMaxParticipants() - 1 >= selectedUsersList.size()) {
                 completeMeetingCreation(response, session, meetingCache, selectedUsersList);
             } else {
@@ -122,25 +121,6 @@ public class CheckInvitations extends HttpServlet {
         }
     }
 
-    private void sendRequestAgain(HttpServletResponse response, HttpServletRequest request, TempMeeting tempMeeting, ArrayList<User> selectedUsersList) throws IOException, SQLException {
-        request.setAttribute("selectedUsers", selectedUsersList); //store them in the session
-        //you've selected too much users
-        String path = getServletContext().getContextPath();
-        int deselectAmount = selectedUsersList.size() + 1 - tempMeeting.getMaxParticipants(); //TODO BUG UNO IN PIU'
-
-        request.setAttribute("numberOfUsersToDeselect", deselectAmount);
-        request.setAttribute("tempMeetingInfo", tempMeeting);
-
-        RequestDispatcher rd=request.getRequestDispatcher("/Invite");
-        try {
-            rd.forward(request, response);
-        } catch (ServletException e) {
-            path += "/HomePage?error=";
-            path += "error when forwarding request from check invitation to invite servlet";
-            response.sendRedirect(path);
-        }
-    }
-
     private void completeMeetingCreation(HttpServletResponse response, HttpSession session, TempMeeting tempMeeting, ArrayList<User> selectedUsersList) throws IOException, SQLException {
         MeetingWithInvitationsList meetingWithInvitationsList = new MeetingWithInvitationsList(tempMeeting, selectedUsersList);
 
@@ -149,7 +129,6 @@ public class CheckInvitations extends HttpServlet {
             meetingsDAO.addMeetingToDatabase(meetingWithInvitationsList);
             cleanTempDB(tempMeeting);
         } catch (SQLException throwables) {
-            //todo aggiornare a JS cancel meeting creation
             cancelMeetingCreation(response, session, tempMeeting);
             return;
         }
@@ -160,7 +139,7 @@ public class CheckInvitations extends HttpServlet {
 
     private void cancelMeetingCreation(HttpServletResponse response, HttpSession session, TempMeeting tempMeeting) throws IOException, SQLException {
         cleanTempDB(tempMeeting);
-        response.sendRedirect(getServletContext().getContextPath() + "/MeetingCancellation");
+        response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
     }
 
     private void cleanTempDB(TempMeeting tempMeeting) throws SQLException {
