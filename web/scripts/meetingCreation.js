@@ -49,7 +49,7 @@ function resetInviteError() {
                                 break;
                         }
                     } else {
-                        backToWebApp("error in request");
+                       // backToWebApp("error in request");
                     }
                 }
             );

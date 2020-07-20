@@ -50,11 +50,13 @@ public class GetInvitationList extends HttpServlet {
 
             Gson gson = new Gson();
             String json = gson.toJson(allAvailableUsers);
+            response.setStatus(HttpServletResponse.SC_OK);
             response.setContentType("application/json");
             response.setCharacterEncoding("UTF-8");
             response.getWriter().write(json);
         } catch (SQLException e) {
-            //todo
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            response.getWriter().write("internal server error");
         }
     }
 }
