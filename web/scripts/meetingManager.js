@@ -15,7 +15,7 @@ window.addEventListener("load", () => {
         invitedList.show();
         createdMeetingsList.show();
 
-    } // display initial content
+    }
 
 }, false);
 
@@ -42,6 +42,24 @@ function InvitedAtList(_alert, _listcontainer) {
                         }
                         self.update(invitedAtMeetings); // self visible by closure
 
+                    }
+                    switch (req.status) {
+                        case 400: // bad request
+                            forceLocalLogoutMessage("bad request");
+                            break;
+                        case 401: // unauthorized
+                            self.alert.textContent = "error: unauthorized";
+                            forceLocalLogout();
+                            break;
+
+                        case 404:
+                            self.alert.textContent = "error: bad request url";
+                            forceLocalLogoutMessage("invalid request path");
+                            break;
+                        case 500: // server error
+                            self.alert.textContent = "internal server error, unable to fetch data";
+                            forceLocalLogoutMessage("internal server error, please try again later");
+                            break;
                     }
                 } else {
                     self.alert.textContent = message;
@@ -123,13 +141,13 @@ function CreatedList(_alert, _listcontainer) {
                     }
                     switch (req.status) {
                         case 400: // bad request
-                            logOut();
+                            forceLocalLogoutMessage("bad request");
                             break;
                         case 401: // unauthorized
                             forceLocalLogout();
                             break;
                         case 500: // server error
-                            logOut();
+                            forceLocalLogoutMessage("internal server error");
                             break;
                     }
                 } else {
@@ -237,13 +255,13 @@ function logOut() {
                     window.location.href = "../index.html?successMessage=You have successfully logged out!";
                     break;
                 case 400: // bad request
-                    forceLocalLogout();
+                    forceLocalLogoutMessage("bad request");
                     break;
                 case 401: // unauthorized
                     forceLocalLogout();
                     break;
                 case 500: // server error
-                    forceLocalLogout();
+                    forceLocalLogoutMessage("internal server error, please try again later");
                     break;
             }
         }
@@ -253,4 +271,8 @@ function logOut() {
 function forceLocalLogout() {
     localStorage.removeItem("username");
     window.location.href = "../index.html?errorMessage=Please log in to continue";
+}
+function forceLocalLogoutMessage(msg) {
+    localStorage.removeItem("username");
+    window.location.href = "../index.html?errorMessage=" + msg;
 }

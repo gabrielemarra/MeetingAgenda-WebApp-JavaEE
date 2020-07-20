@@ -49,7 +49,7 @@ function resetInviteError() {
                                 break;
                         }
                     } else {
-                       // backToWebApp("error in request");
+                       backToWebApp("request error");
                     }
                 }
             );
@@ -64,10 +64,6 @@ function resetInviteError() {
                 var template = document.querySelector("#id_invite_user");
 
                 var alreadySelectedUsers = false;
-                if (sessionStorage.getItem("alreadySelectedUsers")) {
-                    //todo
-                    // alreadySelectedUsers = parseInt(sessionStorage.getItem("alreadySelectedUsers"));
-                }
 
                 //print a table row for each meeting
                 invitationList.forEach(function (user) { // self visible here, not this
@@ -79,11 +75,6 @@ function resetInviteError() {
                     checkBox.setAttribute("field", user.id);
                     checkBox.setAttribute("name", user.id);
                     checkBox.setAttribute("value", user.id);
-
-                    if (alreadySelectedUsers && alreadySelectedUsers === user.id) {
-                        //todo check
-                        checkBox.setAttribute("checked", "checked");
-                    }
 
                     self.listcontainer.appendChild(row);
                 });
@@ -106,10 +97,8 @@ function resetInviteError() {
                         switch (req.status) {
                             case 200:
                                 saveMeetingInfo(req.responseText);
-                                // setMeetingInfoIntoInvitationForm();
                                 resetInvitationAttempts();
                                 resetCreatingInfoForm();
-                                //open modal
                                 prepareAndShowModal();
                                 break;
                             case 400: // bad request
@@ -126,7 +115,7 @@ function resetInviteError() {
                 }
             );
         } else {
-            form.reportValidity();
+            form.reportValidity(); //todo valutare ritorno?
             setGenericCreationAlert();
         }
     });
@@ -187,7 +176,6 @@ function resetInviteError() {
     function resetTitleStatus() {
         let title = document.getElementById("title-input");
         const titleAlert = document.getElementById("id_title_alert");
-        // title.value = title.defaultValue;
         titleAlert.textContent = "";
         titleAlert.style.display = "none";
         title.className = "form-control";
@@ -463,9 +451,7 @@ function resetInviteError() {
             titleAlert.style.display = "block";
             //homepage con errore del text content
             return;
-        } else if ("".length === 9999) {
-            //todo metodo marra per controllare se
-        } else if (userSelected.length > getMeetingInfo().maxParticipants - 1) {
+        }  else if (userSelected.length > getMeetingInfo().maxParticipants - 1) {
             increaseInvitationAttempts();
             let titleAlert = document.getElementById("id_modal_alert");
             let numberDesect = userSelected.length - (getMeetingInfo().maxParticipants - 1);
@@ -483,13 +469,14 @@ function resetInviteError() {
                                     closeModalAndRefreshTables();
                                     break;
                                 case 400: // bad request
-                                    // document.getElementById("errormessage").textContent = message;
+                                    backToWebApp("bad request, unable to create meeting");
                                     break;
                                 case 401: // unauthorized
-                                    // document.getElementById("errormessage").textContent = message;
+                                    backToWebApp("error: unauthorized");
+                                    forceLocalLogout();
                                     break;
                                 case 500: // server error
-                                    //document.getElementById("errormessage").textContent = message;
+                                    backToWebApp("internal server error, try again later");
                                     break;
                             }
                         }

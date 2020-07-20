@@ -5,6 +5,7 @@ import it.polimi.tiw.auxiliary.ConnectionManager;
 import it.polimi.tiw.beans.Meeting;
 import it.polimi.tiw.beans.User;
 import it.polimi.tiw.dao.MeetingsDAO;
+import org.apache.commons.text.StringEscapeUtils;
 
 import javax.servlet.ServletException;
 import javax.servlet.UnavailableException;
@@ -39,8 +40,20 @@ public class GetMeetingsData extends HttpServlet {
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-        boolean my = request.getParameter("my").equals("true");
-        //TODO manomissione parametro!!
+        String selector = StringEscapeUtils.escapeJava(request.getParameter("my"));
+        if(selector == null) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.getWriter().println("error in request");
+            return;
+        }
+        boolean my = selector.equals("true");
+
+
+        if (!selector.equalsIgnoreCase("true") && !selector.equalsIgnoreCase("false")) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.getWriter().println("error in request");
+            return;
+        }
 
         //get meetings created by the user
         Integer userId = null;
@@ -55,7 +68,6 @@ public class GetMeetingsData extends HttpServlet {
             }
             else meetings = new MeetingsDAO(connection).getMeetingListWithThisUserAsParticipant(user.getId());
         } catch (SQLException e) {
-            e.printStackTrace();
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             response.getWriter().println("Not possible to recover invited at meetings");
             return;
