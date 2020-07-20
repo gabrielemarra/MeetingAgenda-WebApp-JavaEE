@@ -386,29 +386,6 @@ function resetInviteError() {
         return parseInt(sessionStorage.getItem("invitationAttempts"))
     }
 
-
-    function updateLocalAttempts() {
-        makeCall("POST", '../GetAttempts', getMeetingInfoForm(), function (req) {
-            if (req.readyState == XMLHttpRequest.DONE) {
-                switch (req.status) {
-                    case 200:
-                        let attemptsFromServer = req.responseText;
-                        sessionStorage.setItem("invitationAttempts", attemptsFromServer.toString());
-                        return parseInt(attemptsFromServer);
-                    case 400: // bad request
-                        backToWebApp("invalid request.");
-                        break;
-                    case 401: // unauthorized
-                        forceLocalLogout();
-                        break;
-                    case 500: // server error
-                        backToWebApp("internal server error.");
-                        break;
-                }
-            }
-        });
-    }
-
     function increaseInvitationAttempts() {
         let oldAttempts = getInvitationAttempts();
 
