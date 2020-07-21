@@ -4,10 +4,7 @@ import it.polimi.tiw.beans.Meeting;
 import it.polimi.tiw.beans.MeetingWithInvitationsList;
 import it.polimi.tiw.beans.User;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -21,32 +18,15 @@ public class MeetingsDAO {
         this.connection = connection;
     }
 
-    private int getLastID(Meeting meeting) throws SQLException {
-        String query = "SELECT  id_meeting FROM meetings  WHERE title=? AND duration=? AND max_participants=? AND id_creator=? AND date_time = ?";
-        try (PreparedStatement preparedStatement = connection.prepareStatement(query);) {
-            preparedStatement.setString(1, meeting.getTitle());
-            preparedStatement.setInt(2, meeting.getDuration());
-            preparedStatement.setInt(3, meeting.getMaxParticipants());
-            preparedStatement.setInt(4, meeting.getIdCreator());
-            preparedStatement.setString(5, meeting.getFormattedDateTime());
-            try (ResultSet result = preparedStatement.executeQuery();) {
-
-                if (result.next()) {
-                    return result.getInt(1);
-                } else {
-                    System.out.println("Error");
-                    throw new SQLException();
-                    //todo remove
-                }
-            }
-        }
-    }
-
     public void addMeetingToDatabase(MeetingWithInvitationsList meetingWithInvitationsList) throws SQLException {
         Meeting meetingInfo = meetingWithInvitationsList.getRealMeeting();
-
         String query = "INSERT INTO meetings (`title`, `date_time`, `duration`, `max_participants`, `id_creator`) VALUES (?,?,?,?,?);";
-        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+
+        InvitationDAO invitationDAO = new InvitationDAO(connection);
+
+        try {
+            connection.setAutoCommit(false);
+            PreparedStatement preparedStatement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
             preparedStatement.setString(1, meetingInfo.getTitle());
             preparedStatement.setString(2, meetingInfo.getFormattedDateTime());
             preparedStatement.setInt(3, meetingInfo.getDuration());
@@ -54,21 +34,29 @@ public class MeetingsDAO {
             preparedStatement.setInt(5, meetingInfo.getIdCreator());
 
             preparedStatement.executeUpdate();
-            int meetingID = getLastID(meetingInfo);
-            try {
-                for (User user : meetingWithInvitationsList.getParticipantsList()) {
-                    if(user.getId()!=meetingInfo.getIdCreator()) {
-                        new InvitationDAO(connection).addInvitationToDatabase(meetingID, user);
-                    }
-                }
-            } catch (SQLException e) {
-                String deletionQuery = "DELETE FROM meetings WHERE (`id_meeting` = ?);";
-                try (PreparedStatement deletionPreparedStatement = connection.prepareStatement(deletionQuery)) {
-                    deletionPreparedStatement.setInt(1, meetingID);
-                    deletionPreparedStatement.executeUpdate();
-                }
-                throw new SQLException();
+            int meetingID;
+
+            ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
+            if (generatedKeys.next()) {
+                meetingID = generatedKeys.getInt(1);
+            } else {
+                throw new SQLException("Creating Meeting failed, no ID obtained.");
             }
+
+            for (User user : meetingWithInvitationsList.getParticipantsList()) {
+                if (user.getId() != meetingInfo.getIdCreator()) {
+                    invitationDAO.addInvitationToDatabase(meetingID, user);
+                }
+            }
+            connection.commit();
+
+        } catch (SQLException e) {
+            if (connection != null) {
+                connection.rollback();
+            }
+            throw e;
+        } finally {
+            connection.setAutoCommit(true);
         }
     }
 
