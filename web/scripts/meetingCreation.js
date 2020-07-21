@@ -180,7 +180,7 @@ function resetInviteError() {
     }
 
     function titleIsInvalid(title) {
-        return title === "" || title.length >= 48 || title.length < 3;
+        return title === "" || title.length >= 60 || title.length < 3;
     }
 
     document.getElementById("duration-input").onchange = realtimeValidateDuration;

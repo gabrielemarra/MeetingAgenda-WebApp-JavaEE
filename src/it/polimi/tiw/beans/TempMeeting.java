@@ -114,6 +114,9 @@ public class TempMeeting {
         if (tempMeeting.getTitle().length() < 4) {
             throw new InvalidParameterException("Meeting title is too short");
 
+        } else if (tempMeeting.getTitle().length() >= 60) {
+            throw new InvalidParameterException("Meeting title is too long");
+
         } else if (tempMeeting.getDuration() < 5) {
             throw new InvalidParameterException("Meeting duration is too short, at least 5 minutes");
 
