@@ -43,7 +43,7 @@ DROP TABLE IF EXISTS `meetings`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `meetings` (
   `id_meeting` int NOT NULL AUTO_INCREMENT,
-  `title` varchar(256) NOT NULL,
+  `title` varchar(60) NOT NULL,
   `date_time` datetime NOT NULL,
   `duration` int NOT NULL,
   `max_participants` int NOT NULL,
@@ -53,7 +53,7 @@ CREATE TABLE `meetings` (
   UNIQUE KEY `unique_set_title_date` (`title`,`date_time`,`duration`,`max_participants`,`id_creator`),
   KEY `id_creatore_idx` (`id_creator`) /*!80000 INVISIBLE */,
   CONSTRAINT `creator` FOREIGN KEY (`id_creator`) REFERENCES `users` (`id_user`) ON DELETE RESTRICT ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=84 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -64,7 +64,7 @@ DROP TABLE IF EXISTS `temp_meetings`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `temp_meetings` (
-  `title` varchar(256) NOT NULL,
+  `title` varchar(60) NOT NULL,
   `date_time` datetime NOT NULL,
   `duration` int NOT NULL,
   `max_participants` int NOT NULL,
@@ -88,11 +88,11 @@ CREATE TABLE `users` (
   `id_user` int NOT NULL AUTO_INCREMENT,
   `email` varchar(256) NOT NULL,
   `password` varchar(256) NOT NULL,
-  `displayed_name` varchar(256) NOT NULL,
+  `displayed_name` varchar(60) NOT NULL,
   PRIMARY KEY (`id_user`),
   UNIQUE KEY `id_user_UNIQUE` (`id_user`),
   UNIQUE KEY `email_UNIQUE` (`email`)
-) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
