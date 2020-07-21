@@ -44,9 +44,13 @@ public class MeetingsDAO {
 
     public void addMeetingToDatabase(MeetingWithInvitationsList meetingWithInvitationsList) throws SQLException {
         Meeting meetingInfo = meetingWithInvitationsList.getRealMeeting();
-
         String query = "INSERT INTO meetings (`title`, `date_time`, `duration`, `max_participants`, `id_creator`) VALUES (?,?,?,?,?);";
-        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+
+        InvitationDAO invitationDAO = new InvitationDAO(connection);
+
+        try {
+            connection.setAutoCommit(false);
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
             preparedStatement.setString(1, meetingInfo.getTitle());
             preparedStatement.setString(2, meetingInfo.getFormattedDateTime());
             preparedStatement.setInt(3, meetingInfo.getDuration());
@@ -55,20 +59,21 @@ public class MeetingsDAO {
 
             preparedStatement.executeUpdate();
             int meetingID = getLastID(meetingInfo);
-            try {
-                for (User user : meetingWithInvitationsList.getParticipantsList()) {
-                    if(user.getId()!=meetingInfo.getIdCreator()) {
-                        new InvitationDAO(connection).addInvitationToDatabase(meetingID, user);
-                    }
+
+            for (User user : meetingWithInvitationsList.getParticipantsList()) {
+                if (user.getId() != meetingInfo.getIdCreator()) {
+                    invitationDAO.addInvitationToDatabase(meetingID, user);
                 }
-            } catch (SQLException e) {
-                String deletionQuery = "DELETE FROM meetings WHERE (`id_meeting` = ?);";
-                try (PreparedStatement deletionPreparedStatement = connection.prepareStatement(deletionQuery)) {
-                    deletionPreparedStatement.setInt(1, meetingID);
-                    deletionPreparedStatement.executeUpdate();
-                }
-                throw new SQLException();
             }
+            connection.commit();
+
+        } catch (SQLException e) {
+            if (connection != null) {
+                connection.rollback();
+            }
+            throw e;
+        } finally {
+            connection.setAutoCommit(true);
         }
     }
 
