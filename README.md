@@ -10,3 +10,6 @@ Final score was ***27 / 30*** (A)
 Develop a WebApp using Java Servlet and MySQL (Back-end) and HTML5, CSS and JavaScript (Front-end).
 <br>
 For the full specification visit this link: [Specification (Italian only)](./Project_Specification.pdf)
+##Screenshot
+![Login](https://placehold.co/600x400/EEE/31343C)
+![Login](https://github.com/[username]/[reponame]/blob/[branch]/image.jpg?raw=true)
