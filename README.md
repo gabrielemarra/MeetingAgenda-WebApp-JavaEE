@@ -12,10 +12,14 @@ Develop a WebApp using Java Servlet and MySQL (Back-end) and HTML5, CSS and Java
 For the full specification visit this link: [Specification (Italian only)](./Project_Specification.pdf)
 # Screenshots
 ##Login
+
 ![Login](https://github.com/gabrielemarra/TIW-2020-RIA/blob/master/readme_images/login.png?raw=true)
 ##Sign-up
+
 ![Sign-up](https://github.com/gabrielemarra/TIW-2020-RIA/blob/master/readme_images/signup.png?raw=true)
 ##Main Page
+
 ![Main Page](https://github.com/gabrielemarra/TIW-2020-RIA/blob/master/readme_images/main-page.png?raw=true)
 ##Invitation
+
 ![Invitation](https://github.com/gabrielemarra/TIW-2020-RIA/blob/master/readme_images/invitation.png?raw=true)
