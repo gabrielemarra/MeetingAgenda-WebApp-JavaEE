@@ -9,4 +9,4 @@ Final score was ***27 / 30*** (A)
 ## Project Requirements
 Develop a WebApp using Java Servlet and MySQL (Back-end) and HTML5, CSS and JavaScript (Front-end).
 <br>
-For the full specification visit this link: [Specification (Italian only)]()
+For the full specification visit this link: [Specification (Italian only)](./Project_Specification.pdf)
